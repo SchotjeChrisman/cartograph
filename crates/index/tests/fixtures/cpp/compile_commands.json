@@ -1,0 +1,4 @@
+[
+  {"directory": "/PROJECT_ROOT", "file": "src/main.cpp",
+   "command": "c++ -Iinclude -Isrc -c src/main.cpp"}
+]

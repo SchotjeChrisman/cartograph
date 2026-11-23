@@ -1,0 +1,25 @@
+## FILES
+app/Mailer.php repo= lang=php status=parsed tags=0 detail=-
+app/Mailer2.php repo= lang=php status=parsed tags=0 detail=-
+jobs/nightly.sh repo= lang=shell status=unparsed tags=0 detail=no shell language module yet
+links.yaml repo= lang=links status=parsed tags=0 detail=-
+## NODES
+class App\Mailer @app/Mailer.php:5-10 sig=class Mailer doc=-
+class App\Notifier @app/Mailer2.php:5-10 sig=class Notifier doc=-
+file app/Mailer.php @app/Mailer.php:--- sig=- doc=-
+file app/Mailer2.php @app/Mailer2.php:--- sig=- doc=-
+file jobs/nightly.sh @jobs/nightly.sh:--- sig=- doc=-
+file links.yaml @links.yaml:--- sig=- doc=-
+method App\Mailer::send @app/Mailer.php:7-9 sig=public function send(): void doc=-
+method App\Notifier::send @app/Mailer2.php:7-9 sig=public function send(): void doc=-
+unresolved App\Nowhere::run @-:--- sig=- doc=-
+unresolved send @-:--- sig=- doc=-
+## EDGES
+class App\Mailer @app/Mailer.php -contains/extracted-> method App\Mailer::send @app/Mailer.php line=7 by=app/Mailer.php reason=-
+class App\Notifier @app/Mailer2.php -contains/extracted-> method App\Notifier::send @app/Mailer2.php line=7 by=app/Mailer2.php reason=-
+file app/Mailer.php @app/Mailer.php -contains/extracted-> class App\Mailer @app/Mailer.php line=5 by=app/Mailer.php reason=-
+file app/Mailer2.php @app/Mailer2.php -contains/extracted-> class App\Notifier @app/Mailer2.php line=5 by=app/Mailer2.php reason=-
+file jobs/nightly.sh @jobs/nightly.sh -declared/declared-> method App\Mailer::send @app/Mailer.php line=3 by=links.yaml reason=cron: 02:00 every night
+file links.yaml @links.yaml -declared/declared-> method App\Notifier::send @app/Mailer2.php line=7 by=links.yaml reason=webhook
+file links.yaml @links.yaml -declared/declared-> unresolved App\Nowhere::run @- line=12 by=links.yaml reason=runtime-route; `App\Nowhere::run` not found in the graph
+method App\Mailer::send @app/Mailer.php -declared/declared-> unresolved send @- line=9 by=links.yaml reason=queue; `send` ambiguous: 2 candidates

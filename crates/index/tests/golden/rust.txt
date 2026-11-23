@@ -1,0 +1,105 @@
+## FILES
+crates/app/src/local.rs repo= lang=rust status=parsed tags=0 detail=-
+crates/app/src/main.rs repo= lang=rust status=parsed tags=0 detail=-
+crates/core_lib/src/lib.rs repo= lang=rust status=parsed tags=0 detail=-
+crates/core_lib/src/shapes.rs repo= lang=rust status=parsed tags=0 detail=-
+crates/core_lib/src/util.rs repo= lang=rust status=parsed tags=0 detail=-
+## NODES
+class core_lib::shapes::Circle @crates/core_lib/src/shapes.rs:15-17 sig=pub struct Circle doc=-
+class core_lib::shapes::Kind @crates/core_lib/src/shapes.rs:23-26 sig=pub enum Kind doc=-
+class core_lib::shapes::Square @crates/core_lib/src/shapes.rs:19-21 sig=pub struct Square doc=-
+file crates/app/src/local.rs @crates/app/src/local.rs:--- sig=- doc=-
+file crates/app/src/main.rs @crates/app/src/main.rs:--- sig=- doc=-
+file crates/core_lib/src/lib.rs @crates/core_lib/src/lib.rs:--- sig=- doc=-
+file crates/core_lib/src/shapes.rs @crates/core_lib/src/shapes.rs:--- sig=- doc=-
+file crates/core_lib/src/util.rs @crates/core_lib/src/util.rs:--- sig=- doc=-
+function app::local::go @crates/app/src/local.rs:1-3 sig=pub fn go() doc=-
+function app::local::stop @crates/app/src/local.rs:5-5 sig=fn stop() doc=-
+function app::main @crates/app/src/main.rs:7-18 sig=fn main() doc=-
+function core_lib::describe_all @crates/core_lib/src/lib.rs:8-10 sig=pub fn describe_all() -> usize doc=-
+function core_lib::shapes::tests::helper_in_tests @crates/core_lib/src/shapes.rs:79-79 sig=fn helper_in_tests() doc=-
+function core_lib::shapes::tests::unit @crates/core_lib/src/shapes.rs:74-77 sig=fn unit() doc=-
+function core_lib::shapes::unit_area @crates/core_lib/src/shapes.rs:65-67 sig=pub fn unit_area() -> f64 doc=-
+function core_lib::util::deep::leaf @crates/core_lib/src/util.rs:13-15 sig=pub fn leaf() -> usize doc=-
+function core_lib::util::helper @crates/core_lib/src/util.rs:1-3 sig=pub fn helper() -> usize doc=-
+function core_lib::util::nested @crates/core_lib/src/util.rs:5-10 sig=fn nested() -> usize doc=-
+function core_lib::util::nested::inner @crates/core_lib/src/util.rs:6-8 sig=fn inner() -> usize doc=-
+method core_lib::shapes::Circle::area @crates/core_lib/src/shapes.rs:53-56 sig=fn area(&self) -> f64 doc=-
+method core_lib::shapes::Circle::describe @crates/core_lib/src/shapes.rs:37-39 sig=pub fn describe(&self) -> String doc=Both Circle and Square have `describe`, so a call on an unknown receiver is ambiguous.
+method core_lib::shapes::Circle::new @crates/core_lib/src/shapes.rs:31-34 sig=pub fn new(radius: f64) -> Self doc=-
+method core_lib::shapes::Shape::doubled @crates/core_lib/src/shapes.rs:8-10 sig=fn doubled(&self) -> f64 doc=-
+method core_lib::shapes::Square::describe @crates/core_lib/src/shapes.rs:43-45 sig=pub fn describe(&self) -> String doc=-
+method core_lib::shapes::Square::fmt @crates/core_lib/src/shapes.rs:60-62 sig=fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result doc=-
+method core_lib::shapes::Square::only_here @crates/core_lib/src/shapes.rs:47-49 sig=fn only_here(&self) -> f64 doc=-
+module app @crates/app/src/main.rs:1-19 sig=- doc=-
+module app::local @crates/app/src/local.rs:1-6 sig=- doc=-
+module core_lib @crates/core_lib/src/lib.rs:1-11 sig=- doc=-
+module core_lib::shapes @crates/core_lib/src/shapes.rs:1-81 sig=- doc=-
+module core_lib::shapes::tests @crates/core_lib/src/shapes.rs:70-80 sig=mod tests doc=-
+module core_lib::util @crates/core_lib/src/util.rs:1-17 sig=- doc=-
+module core_lib::util::deep @crates/core_lib/src/util.rs:12-16 sig=pub mod deep doc=-
+type core_lib::shapes::Named @crates/core_lib/src/shapes.rs:13-13 sig=pub trait Named doc=-
+type core_lib::shapes::Shape @crates/core_lib/src/shapes.rs:5-11 sig=pub trait Shape: Named doc=Anything with an area.
+unresolved core_lib::gone @-:--- sig=- doc=-
+unresolved crate::missing::nothing @-:--- sig=- doc=-
+unresolved describe @-:--- sig=- doc=-
+unresolved inner @-:--- sig=- doc=-
+## EDGES
+class core_lib::shapes::Circle @crates/core_lib/src/shapes.rs -contains/extracted-> method core_lib::shapes::Circle::area @crates/core_lib/src/shapes.rs line=53 by=crates/core_lib/src/shapes.rs reason=-
+class core_lib::shapes::Circle @crates/core_lib/src/shapes.rs -contains/extracted-> method core_lib::shapes::Circle::describe @crates/core_lib/src/shapes.rs line=37 by=crates/core_lib/src/shapes.rs reason=-
+class core_lib::shapes::Circle @crates/core_lib/src/shapes.rs -contains/extracted-> method core_lib::shapes::Circle::new @crates/core_lib/src/shapes.rs line=31 by=crates/core_lib/src/shapes.rs reason=-
+class core_lib::shapes::Circle @crates/core_lib/src/shapes.rs -implements/extracted-> type core_lib::shapes::Named @crates/core_lib/src/shapes.rs line=28 by=crates/core_lib/src/shapes.rs reason=-
+class core_lib::shapes::Circle @crates/core_lib/src/shapes.rs -implements/extracted-> type core_lib::shapes::Shape @crates/core_lib/src/shapes.rs line=52 by=crates/core_lib/src/shapes.rs reason=-
+class core_lib::shapes::Square @crates/core_lib/src/shapes.rs -contains/extracted-> method core_lib::shapes::Square::describe @crates/core_lib/src/shapes.rs line=43 by=crates/core_lib/src/shapes.rs reason=-
+class core_lib::shapes::Square @crates/core_lib/src/shapes.rs -contains/extracted-> method core_lib::shapes::Square::fmt @crates/core_lib/src/shapes.rs line=60 by=crates/core_lib/src/shapes.rs reason=-
+class core_lib::shapes::Square @crates/core_lib/src/shapes.rs -contains/extracted-> method core_lib::shapes::Square::only_here @crates/core_lib/src/shapes.rs line=47 by=crates/core_lib/src/shapes.rs reason=-
+file crates/app/src/local.rs @crates/app/src/local.rs -contains/extracted-> function app::local::go @crates/app/src/local.rs line=1 by=crates/app/src/local.rs reason=-
+file crates/app/src/local.rs @crates/app/src/local.rs -contains/extracted-> function app::local::stop @crates/app/src/local.rs line=5 by=crates/app/src/local.rs reason=-
+file crates/app/src/local.rs @crates/app/src/local.rs -contains/extracted-> module app::local @crates/app/src/local.rs line=1 by=crates/app/src/local.rs reason=-
+file crates/app/src/main.rs @crates/app/src/main.rs -contains/extracted-> function app::main @crates/app/src/main.rs line=7 by=crates/app/src/main.rs reason=-
+file crates/app/src/main.rs @crates/app/src/main.rs -contains/extracted-> module app @crates/app/src/main.rs line=1 by=crates/app/src/main.rs reason=-
+file crates/app/src/main.rs @crates/app/src/main.rs -imports/extracted-> file crates/core_lib/src/shapes.rs @crates/core_lib/src/shapes.rs line=1 by=crates/app/src/main.rs reason=-
+file crates/app/src/main.rs @crates/app/src/main.rs -imports/extracted-> file crates/core_lib/src/util.rs @crates/core_lib/src/util.rs line=2 by=crates/app/src/main.rs reason=-
+file crates/core_lib/src/lib.rs @crates/core_lib/src/lib.rs -contains/extracted-> function core_lib::describe_all @crates/core_lib/src/lib.rs line=8 by=crates/core_lib/src/lib.rs reason=-
+file crates/core_lib/src/lib.rs @crates/core_lib/src/lib.rs -contains/extracted-> module core_lib @crates/core_lib/src/lib.rs line=1 by=crates/core_lib/src/lib.rs reason=-
+file crates/core_lib/src/shapes.rs @crates/core_lib/src/shapes.rs -contains/extracted-> class core_lib::shapes::Circle @crates/core_lib/src/shapes.rs line=15 by=crates/core_lib/src/shapes.rs reason=-
+file crates/core_lib/src/shapes.rs @crates/core_lib/src/shapes.rs -contains/extracted-> class core_lib::shapes::Kind @crates/core_lib/src/shapes.rs line=23 by=crates/core_lib/src/shapes.rs reason=-
+file crates/core_lib/src/shapes.rs @crates/core_lib/src/shapes.rs -contains/extracted-> class core_lib::shapes::Square @crates/core_lib/src/shapes.rs line=19 by=crates/core_lib/src/shapes.rs reason=-
+file crates/core_lib/src/shapes.rs @crates/core_lib/src/shapes.rs -contains/extracted-> function core_lib::shapes::unit_area @crates/core_lib/src/shapes.rs line=65 by=crates/core_lib/src/shapes.rs reason=-
+file crates/core_lib/src/shapes.rs @crates/core_lib/src/shapes.rs -contains/extracted-> module core_lib::shapes @crates/core_lib/src/shapes.rs line=1 by=crates/core_lib/src/shapes.rs reason=-
+file crates/core_lib/src/shapes.rs @crates/core_lib/src/shapes.rs -contains/extracted-> module core_lib::shapes::tests @crates/core_lib/src/shapes.rs line=70 by=crates/core_lib/src/shapes.rs reason=-
+file crates/core_lib/src/shapes.rs @crates/core_lib/src/shapes.rs -contains/extracted-> type core_lib::shapes::Named @crates/core_lib/src/shapes.rs line=13 by=crates/core_lib/src/shapes.rs reason=-
+file crates/core_lib/src/shapes.rs @crates/core_lib/src/shapes.rs -contains/extracted-> type core_lib::shapes::Shape @crates/core_lib/src/shapes.rs line=5 by=crates/core_lib/src/shapes.rs reason=-
+file crates/core_lib/src/shapes.rs @crates/core_lib/src/shapes.rs -imports/extracted-> file crates/core_lib/src/util.rs @crates/core_lib/src/util.rs line=1 by=crates/core_lib/src/shapes.rs reason=-
+file crates/core_lib/src/util.rs @crates/core_lib/src/util.rs -contains/extracted-> function core_lib::util::helper @crates/core_lib/src/util.rs line=1 by=crates/core_lib/src/util.rs reason=-
+file crates/core_lib/src/util.rs @crates/core_lib/src/util.rs -contains/extracted-> function core_lib::util::nested @crates/core_lib/src/util.rs line=5 by=crates/core_lib/src/util.rs reason=-
+file crates/core_lib/src/util.rs @crates/core_lib/src/util.rs -contains/extracted-> module core_lib::util @crates/core_lib/src/util.rs line=1 by=crates/core_lib/src/util.rs reason=-
+file crates/core_lib/src/util.rs @crates/core_lib/src/util.rs -contains/extracted-> module core_lib::util::deep @crates/core_lib/src/util.rs line=12 by=crates/core_lib/src/util.rs reason=-
+function app::local::go @crates/app/src/local.rs -calls/extracted-> function app::local::stop @crates/app/src/local.rs line=2 by=crates/app/src/local.rs reason=-
+function app::main @crates/app/src/main.rs -calls/extracted-> function app::local::go @crates/app/src/local.rs line=13 by=crates/app/src/main.rs reason=-
+function app::main @crates/app/src/main.rs -calls/extracted-> function core_lib::util::deep::leaf @crates/core_lib/src/util.rs line=12 by=crates/app/src/main.rs reason=-
+function app::main @crates/app/src/main.rs -calls/extracted-> function core_lib::util::helper @crates/core_lib/src/util.rs line=11 by=crates/app/src/main.rs reason=-
+function app::main @crates/app/src/main.rs -calls/extracted-> method core_lib::shapes::Circle::new @crates/core_lib/src/shapes.rs line=8 by=crates/app/src/main.rs reason=-
+function app::main @crates/app/src/main.rs -calls/extracted-> unresolved crate::missing::nothing @- line=14 by=crates/app/src/main.rs reason=path does not resolve
+function app::main @crates/app/src/main.rs -calls/extracted-> unresolved describe @- line=10 by=crates/app/src/main.rs reason=ambiguous: 2 candidates
+function app::main @crates/app/src/main.rs -calls/inferred-> method core_lib::shapes::Circle::area @crates/core_lib/src/shapes.rs line=9 by=crates/app/src/main.rs reason=only method with that name
+function core_lib::describe_all @crates/core_lib/src/lib.rs -calls/extracted-> function core_lib::shapes::unit_area @crates/core_lib/src/shapes.rs line=9 by=crates/core_lib/src/lib.rs reason=-
+function core_lib::describe_all @crates/core_lib/src/lib.rs -calls/extracted-> function core_lib::util::helper @crates/core_lib/src/util.rs line=9 by=crates/core_lib/src/lib.rs reason=-
+function core_lib::shapes::tests::unit @crates/core_lib/src/shapes.rs -calls/extracted-> function core_lib::shapes::tests::helper_in_tests @crates/core_lib/src/shapes.rs line=76 by=crates/core_lib/src/shapes.rs reason=-
+function core_lib::shapes::unit_area @crates/core_lib/src/shapes.rs -calls/extracted-> method core_lib::shapes::Circle::new @crates/core_lib/src/shapes.rs line=66 by=crates/core_lib/src/shapes.rs reason=-
+function core_lib::shapes::unit_area @crates/core_lib/src/shapes.rs -calls/inferred-> method core_lib::shapes::Circle::area @crates/core_lib/src/shapes.rs line=66 by=crates/core_lib/src/shapes.rs reason=only method with that name
+function core_lib::util::deep::leaf @crates/core_lib/src/util.rs -calls/extracted-> function core_lib::util::helper @crates/core_lib/src/util.rs line=14 by=crates/core_lib/src/util.rs reason=-
+function core_lib::util::helper @crates/core_lib/src/util.rs -calls/extracted-> function core_lib::util::nested @crates/core_lib/src/util.rs line=2 by=crates/core_lib/src/util.rs reason=-
+function core_lib::util::nested @crates/core_lib/src/util.rs -calls/extracted-> unresolved inner @- line=9 by=crates/core_lib/src/util.rs reason=no definition found
+function core_lib::util::nested @crates/core_lib/src/util.rs -contains/extracted-> function core_lib::util::nested::inner @crates/core_lib/src/util.rs line=6 by=crates/core_lib/src/util.rs reason=-
+method core_lib::shapes::Circle::new @crates/core_lib/src/shapes.rs -calls/extracted-> function core_lib::util::helper @crates/core_lib/src/util.rs line=32 by=crates/core_lib/src/shapes.rs reason=-
+method core_lib::shapes::Shape::doubled @crates/core_lib/src/shapes.rs -calls/inferred-> method core_lib::shapes::Circle::area @crates/core_lib/src/shapes.rs line=9 by=crates/core_lib/src/shapes.rs reason=only method with that name
+module app @crates/app/src/main.rs -contains/extracted-> module app::local @crates/app/src/local.rs line=5 by=crates/app/src/main.rs reason=-
+module core_lib @crates/core_lib/src/lib.rs -contains/extracted-> module core_lib::shapes @crates/core_lib/src/shapes.rs line=3 by=crates/core_lib/src/lib.rs reason=-
+module core_lib @crates/core_lib/src/lib.rs -contains/extracted-> module core_lib::util @crates/core_lib/src/util.rs line=4 by=crates/core_lib/src/lib.rs reason=-
+module core_lib @crates/core_lib/src/lib.rs -contains/extracted-> unresolved core_lib::gone @- line=6 by=crates/core_lib/src/lib.rs reason=module file not found
+module core_lib::shapes::tests @crates/core_lib/src/shapes.rs -contains/extracted-> function core_lib::shapes::tests::helper_in_tests @crates/core_lib/src/shapes.rs line=79 by=crates/core_lib/src/shapes.rs reason=-
+module core_lib::shapes::tests @crates/core_lib/src/shapes.rs -contains/extracted-> function core_lib::shapes::tests::unit @crates/core_lib/src/shapes.rs line=74 by=crates/core_lib/src/shapes.rs reason=-
+module core_lib::util::deep @crates/core_lib/src/util.rs -contains/extracted-> function core_lib::util::deep::leaf @crates/core_lib/src/util.rs line=13 by=crates/core_lib/src/util.rs reason=-
+type core_lib::shapes::Shape @crates/core_lib/src/shapes.rs -contains/extracted-> method core_lib::shapes::Shape::doubled @crates/core_lib/src/shapes.rs line=8 by=crates/core_lib/src/shapes.rs reason=-
+type core_lib::shapes::Shape @crates/core_lib/src/shapes.rs -inherits/extracted-> type core_lib::shapes::Named @crates/core_lib/src/shapes.rs line=5 by=crates/core_lib/src/shapes.rs reason=-

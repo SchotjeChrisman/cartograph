@@ -1,0 +1,70 @@
+## FILES
+src/Greeter.php repo= lang=php status=parsed tags=0 detail=-
+src/Util/Formatter.php repo= lang=php status=parsed tags=0 detail=-
+src/Util/Printer.php repo= lang=php status=parsed tags=0 detail=-
+src/Util/helpers.php repo= lang=php status=parsed tags=0 detail=-
+src/main.php repo= lang=php status=parsed tags=0 detail=-
+## NODES
+class App\Base @src/Greeter.php:21-27 sig=abstract class Base doc=-
+class App\Greeter @src/Greeter.php:29-42 sig=class Greeter extends Base implements Greets doc=-
+class App\Util\Formatter @src/Util/Formatter.php:5-16 sig=class Formatter doc=-
+class App\Util\Printer @src/Util/Printer.php:5-12 sig=class Printer doc=-
+file src/Greeter.php @src/Greeter.php:--- sig=- doc=-
+file src/Util/Formatter.php @src/Util/Formatter.php:--- sig=- doc=-
+file src/Util/Printer.php @src/Util/Printer.php:--- sig=- doc=-
+file src/Util/helpers.php @src/Util/helpers.php:--- sig=- doc=-
+file src/main.php @src/main.php:--- sig=- doc=-
+function App\Util\slug @src/Util/helpers.php:5-8 sig=function slug(string $text): string doc=-
+function main @src/main.php:7-13 sig=function main($anything): void doc=-
+method App\Base::prefix @src/Greeter.php:23-26 sig=public function prefix(): string doc=-
+method App\Greeter::__construct @src/Greeter.php:33-35 sig=public function __construct(private Formatter $formatter) doc=-
+method App\Greeter::greet @src/Greeter.php:37-41 sig=public function greet(string $name): string doc=-
+method App\Greets::greet @src/Greeter.php:10-10 sig=public function greet(string $name): string; doc=-
+method App\Loud::shout @src/Greeter.php:15-18 sig=public function shout(string $text): string doc=-
+method App\Util\Formatter::format @src/Util/Formatter.php:7-10 sig=public function format(string $text): string doc=-
+method App\Util\Formatter::make @src/Util/Formatter.php:12-15 sig=public static function make(): self doc=-
+method App\Util\Printer::format @src/Util/Printer.php:8-11 sig=public function format(string $text): string doc=Also named `format`, so a call on an untyped value is ambiguous.
+type App\Greets @src/Greeter.php:8-11 sig=interface Greets doc=-
+type App\Loud @src/Greeter.php:13-19 sig=trait Loud doc=-
+unresolved format @-:--- sig=- doc=-
+unresolved greet @-:--- sig=- doc=-
+unresolved strtolower @-:--- sig=- doc=-
+unresolved strtoupper @-:--- sig=- doc=-
+unresolved trim @-:--- sig=- doc=-
+## EDGES
+class App\Base @src/Greeter.php -contains/extracted-> method App\Base::prefix @src/Greeter.php line=23 by=src/Greeter.php reason=-
+class App\Greeter @src/Greeter.php -contains/extracted-> method App\Greeter::__construct @src/Greeter.php line=33 by=src/Greeter.php reason=-
+class App\Greeter @src/Greeter.php -contains/extracted-> method App\Greeter::greet @src/Greeter.php line=37 by=src/Greeter.php reason=-
+class App\Greeter @src/Greeter.php -implements/extracted-> type App\Greets @src/Greeter.php line=29 by=src/Greeter.php reason=-
+class App\Greeter @src/Greeter.php -implements/extracted-> type App\Loud @src/Greeter.php line=31 by=src/Greeter.php reason=-
+class App\Greeter @src/Greeter.php -inherits/extracted-> class App\Base @src/Greeter.php line=29 by=src/Greeter.php reason=-
+class App\Util\Formatter @src/Util/Formatter.php -contains/extracted-> method App\Util\Formatter::format @src/Util/Formatter.php line=7 by=src/Util/Formatter.php reason=-
+class App\Util\Formatter @src/Util/Formatter.php -contains/extracted-> method App\Util\Formatter::make @src/Util/Formatter.php line=12 by=src/Util/Formatter.php reason=-
+class App\Util\Printer @src/Util/Printer.php -contains/extracted-> method App\Util\Printer::format @src/Util/Printer.php line=8 by=src/Util/Printer.php reason=-
+file src/Greeter.php @src/Greeter.php -contains/extracted-> class App\Base @src/Greeter.php line=21 by=src/Greeter.php reason=-
+file src/Greeter.php @src/Greeter.php -contains/extracted-> class App\Greeter @src/Greeter.php line=29 by=src/Greeter.php reason=-
+file src/Greeter.php @src/Greeter.php -contains/extracted-> type App\Greets @src/Greeter.php line=8 by=src/Greeter.php reason=-
+file src/Greeter.php @src/Greeter.php -contains/extracted-> type App\Loud @src/Greeter.php line=13 by=src/Greeter.php reason=-
+file src/Greeter.php @src/Greeter.php -imports/extracted-> file src/Util/Formatter.php @src/Util/Formatter.php line=5 by=src/Greeter.php reason=-
+file src/Greeter.php @src/Greeter.php -imports/extracted-> file src/Util/helpers.php @src/Util/helpers.php line=6 by=src/Greeter.php reason=-
+file src/Util/Formatter.php @src/Util/Formatter.php -contains/extracted-> class App\Util\Formatter @src/Util/Formatter.php line=5 by=src/Util/Formatter.php reason=-
+file src/Util/Printer.php @src/Util/Printer.php -contains/extracted-> class App\Util\Printer @src/Util/Printer.php line=5 by=src/Util/Printer.php reason=-
+file src/Util/helpers.php @src/Util/helpers.php -contains/extracted-> function App\Util\slug @src/Util/helpers.php line=5 by=src/Util/helpers.php reason=-
+file src/main.php @src/main.php -calls/extracted-> function main @src/main.php line=15 by=src/main.php reason=-
+file src/main.php @src/main.php -contains/extracted-> function main @src/main.php line=7 by=src/main.php reason=-
+file src/main.php @src/main.php -imports/extracted-> file src/Greeter.php @src/Greeter.php line=3 by=src/main.php reason=-
+file src/main.php @src/main.php -imports/extracted-> file src/Util/Formatter.php @src/Util/Formatter.php line=4 by=src/main.php reason=-
+function App\Util\slug @src/Util/helpers.php -calls/extracted-> unresolved strtolower @- line=7 by=src/Util/helpers.php reason=no definition found
+function main @src/main.php -calls/extracted-> method App\Greeter::__construct @src/Greeter.php line=9 by=src/main.php reason=-
+function main @src/main.php -calls/extracted-> method App\Util\Formatter::make @src/Util/Formatter.php line=9 by=src/main.php reason=-
+function main @src/main.php -calls/extracted-> unresolved format @- line=11 by=src/main.php reason=ambiguous: 2 candidates
+function main @src/main.php -calls/extracted-> unresolved greet @- line=10 by=src/main.php reason=ambiguous: 2 candidates
+method App\Greeter::greet @src/Greeter.php -calls/extracted-> function App\Util\slug @src/Util/helpers.php line=39 by=src/Greeter.php reason=-
+method App\Greeter::greet @src/Greeter.php -calls/inferred-> method App\Base::prefix @src/Greeter.php line=39 by=src/Greeter.php reason=method of the enclosing class or its parents
+method App\Greeter::greet @src/Greeter.php -calls/inferred-> method App\Loud::shout @src/Greeter.php line=40 by=src/Greeter.php reason=method of the enclosing class or its parents
+method App\Greeter::greet @src/Greeter.php -calls/inferred-> method App\Util\Formatter::format @src/Util/Formatter.php line=40 by=src/Greeter.php reason=method of the declared type of the receiver
+method App\Loud::shout @src/Greeter.php -calls/extracted-> unresolved strtoupper @- line=17 by=src/Greeter.php reason=no definition found
+method App\Util\Formatter::format @src/Util/Formatter.php -calls/extracted-> unresolved trim @- line=9 by=src/Util/Formatter.php reason=no definition found
+method App\Util\Formatter::make @src/Util/Formatter.php -calls/extracted-> class App\Util\Formatter @src/Util/Formatter.php line=14 by=src/Util/Formatter.php reason=-
+type App\Greets @src/Greeter.php -contains/extracted-> method App\Greets::greet @src/Greeter.php line=10 by=src/Greeter.php reason=-
+type App\Loud @src/Greeter.php -contains/extracted-> method App\Loud::shout @src/Greeter.php line=15 by=src/Greeter.php reason=-

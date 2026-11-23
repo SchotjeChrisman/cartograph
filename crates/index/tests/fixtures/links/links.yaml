@@ -1,0 +1,13 @@
+# Wiring no parser can see.
+links:
+  - from: jobs/nightly.sh
+    to: App\Mailer::send
+    kind: cron
+    note: "02:00 every night"
+  - to: App\Notifier::send
+    kind: webhook
+  - from: App\Mailer::send
+    to: send
+    kind: queue          # several things are called send
+  - to: App\Nowhere::run
+    kind: runtime-route

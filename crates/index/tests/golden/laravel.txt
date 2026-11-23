@@ -1,0 +1,184 @@
+## FILES
+app/Contracts/PaymentGateway.php repo= lang=php status=parsed tags=0 detail=-
+app/Events/UserRegistered.php repo= lang=php status=parsed tags=0 detail=-
+app/Http/Controllers/OrderController.php repo= lang=php status=parsed tags=0 detail=-
+app/Http/Controllers/UserController.php repo= lang=php status=parsed tags=0 detail=-
+app/Listeners/Orphaned.php repo= lang=php status=parsed tags=0 detail=-
+app/Listeners/SendWelcomeEmail.php repo= lang=php status=parsed tags=0 detail=-
+app/Models/Helper.php repo= lang=php status=parsed tags=0 detail=-
+app/Models/Invoice.php repo= lang=php status=parsed tags=0 detail=-
+app/Models/User.php repo= lang=php status=parsed tags=0 detail=-
+app/Providers/AppServiceProvider.php repo= lang=php status=parsed tags=0 detail=-
+app/Providers/EventServiceProvider.php repo= lang=php status=parsed tags=0 detail=-
+app/Services/StripeGateway.php repo= lang=php status=parsed tags=0 detail=-
+config/shop.php repo= lang=php status=parsed tags=0 detail=-
+database/migrations/2024_01_01_create_users_table.php repo= lang=php status=parsed tags=0 detail=-
+resources/views/layouts/app.blade.php repo= lang=php status=parsed tags=0 detail=-
+resources/views/partials/footer.blade.php repo= lang=php status=parsed tags=0 detail=-
+resources/views/users/index.blade.php repo= lang=php status=parsed tags=0 detail=-
+resources/views/users/show.blade.php repo= lang=php status=parsed tags=0 detail=-
+resources/views/welcome.blade.php repo= lang=php status=parsed tags=0 detail=-
+routes/web.php repo= lang=php status=parsed tags=0 detail=-
+## NODES
+class App\Events\UserRegistered @app/Events/UserRegistered.php:5-10 sig=class UserRegistered doc=-
+class App\Http\Controllers\OrderController @app/Http/Controllers/OrderController.php:7-18 sig=class OrderController doc=-
+class App\Http\Controllers\UserController @app/Http/Controllers/UserController.php:8-27 sig=class UserController doc=-
+class App\Listeners\Orphaned @app/Listeners/Orphaned.php:5-10 sig=class Orphaned doc=-
+class App\Listeners\SendWelcomeEmail @app/Listeners/SendWelcomeEmail.php:7-12 sig=class SendWelcomeEmail doc=-
+class App\Models\Helper @app/Models/Helper.php:6-8 sig=class Helper doc=Not an Eloquent model, so it gets no table.
+class App\Models\Invoice @app/Models/Invoice.php:7-10 sig=class Invoice extends Model doc=-
+class App\Models\User @app/Models/User.php:7-9 sig=class User extends Model doc=-
+class App\Providers\AppServiceProvider @app/Providers/AppServiceProvider.php:9-15 sig=class AppServiceProvider extends ServiceProvider doc=-
+class App\Providers\EventServiceProvider @app/Providers/EventServiceProvider.php:10-18 sig=class EventServiceProvider extends ServiceProvider doc=-
+class App\Services\StripeGateway @app/Services/StripeGateway.php:7-13 sig=class StripeGateway implements PaymentGateway doc=-
+config_key services.stripe.key @-:--- sig=- doc=-
+config_key shop.currency @-:--- sig=- doc=-
+config_key shop.theme @-:--- sig=- doc=-
+file app/Contracts/PaymentGateway.php @app/Contracts/PaymentGateway.php:--- sig=- doc=-
+file app/Events/UserRegistered.php @app/Events/UserRegistered.php:--- sig=- doc=-
+file app/Http/Controllers/OrderController.php @app/Http/Controllers/OrderController.php:--- sig=- doc=-
+file app/Http/Controllers/UserController.php @app/Http/Controllers/UserController.php:--- sig=- doc=-
+file app/Listeners/Orphaned.php @app/Listeners/Orphaned.php:--- sig=- doc=-
+file app/Listeners/SendWelcomeEmail.php @app/Listeners/SendWelcomeEmail.php:--- sig=- doc=-
+file app/Models/Helper.php @app/Models/Helper.php:--- sig=- doc=-
+file app/Models/Invoice.php @app/Models/Invoice.php:--- sig=- doc=-
+file app/Models/User.php @app/Models/User.php:--- sig=- doc=-
+file app/Providers/AppServiceProvider.php @app/Providers/AppServiceProvider.php:--- sig=- doc=-
+file app/Providers/EventServiceProvider.php @app/Providers/EventServiceProvider.php:--- sig=- doc=-
+file app/Services/StripeGateway.php @app/Services/StripeGateway.php:--- sig=- doc=-
+file config/shop.php @config/shop.php:--- sig=- doc=-
+file database/migrations/2024_01_01_create_users_table.php @database/migrations/2024_01_01_create_users_table.php:--- sig=- doc=-
+file resources/views/layouts/app.blade.php @resources/views/layouts/app.blade.php:--- sig=- doc=-
+file resources/views/partials/footer.blade.php @resources/views/partials/footer.blade.php:--- sig=- doc=-
+file resources/views/users/index.blade.php @resources/views/users/index.blade.php:--- sig=- doc=-
+file resources/views/users/show.blade.php @resources/views/users/show.blade.php:--- sig=- doc=-
+file resources/views/welcome.blade.php @resources/views/welcome.blade.php:--- sig=- doc=-
+file routes/web.php @routes/web.php:--- sig=- doc=-
+hook App\Events\UserRegistered @-:--- sig=- doc=-
+method App\Contracts\PaymentGateway::charge @app/Contracts/PaymentGateway.php:7-7 sig=public function charge(int $cents): bool; doc=-
+method App\Events\UserRegistered::__construct @app/Events/UserRegistered.php:7-9 sig=public function __construct(public $user) doc=-
+method App\Http\Controllers\OrderController::index @app/Http/Controllers/OrderController.php:9-12 sig=public function index() doc=-
+method App\Http\Controllers\OrderController::store @app/Http/Controllers/OrderController.php:14-17 sig=public function store() doc=-
+method App\Http\Controllers\UserController::index @app/Http/Controllers/UserController.php:10-14 sig=public function index() doc=-
+method App\Http\Controllers\UserController::show @app/Http/Controllers/UserController.php:23-26 sig=public function show(User $user) doc=-
+method App\Http\Controllers\UserController::store @app/Http/Controllers/UserController.php:16-21 sig=public function store() doc=-
+method App\Listeners\Orphaned::other @app/Listeners/Orphaned.php:7-9 sig=public function other(): void doc=-
+method App\Listeners\SendWelcomeEmail::handle @app/Listeners/SendWelcomeEmail.php:9-11 sig=public function handle(UserRegistered $event): void doc=-
+method App\Providers\AppServiceProvider::register @app/Providers/AppServiceProvider.php:11-14 sig=public function register(): void doc=-
+method App\Services\StripeGateway::charge @app/Services/StripeGateway.php:9-12 sig=public function charge(int $cents): bool doc=-
+route DELETE /orders/{order} @routes/web.php:19-19 sig=Route::resource('orders', OrderController::class) doc=-
+route GET / @routes/web.php:7-9 sig=Route::get('/', function () { return view('welcome'); }) doc=-
+route GET /admin/audit @routes/web.php:16-16 sig=Route::get('/audit', [UserController::class, 'audit']) doc=-
+route GET /admin/users/{user} @routes/web.php:15-15 sig=Route::get('/users/{user}', [UserController::class, 'show']) doc=-
+route GET /gone @routes/web.php:22-22 sig=Route::get('/gone', [App\Http\Controllers\GhostController::class, 'index']) doc=-
+route GET /legacy @routes/web.php:21-21 sig=Route::get('/legacy', 'UserController@index') doc=-
+route GET /orders @routes/web.php:19-19 sig=Route::resource('orders', OrderController::class) doc=-
+route GET /orders/create @routes/web.php:19-19 sig=Route::resource('orders', OrderController::class) doc=-
+route GET /orders/{order} @routes/web.php:19-19 sig=Route::resource('orders', OrderController::class) doc=-
+route GET /orders/{order}/edit @routes/web.php:19-19 sig=Route::resource('orders', OrderController::class) doc=-
+route GET /users @routes/web.php:11-11 sig=Route::get('/users', [UserController::class, 'index']) doc=-
+route POST /orders @routes/web.php:19-19 sig=Route::resource('orders', OrderController::class) doc=-
+route POST /users @routes/web.php:12-12 sig=Route::post('/users', [UserController::class, 'store']) doc=-
+route PUT|PATCH /orders/{order} @routes/web.php:19-19 sig=Route::resource('orders', OrderController::class) doc=-
+table billing_invoices @-:--- sig=- doc=-
+table orders @-:--- sig=- doc=-
+table users @-:--- sig=- doc=-
+type App\Contracts\PaymentGateway @app/Contracts/PaymentGateway.php:5-8 sig=interface PaymentGateway doc=-
+unresolved App\Http\Controllers\GhostController @-:--- sig=- doc=-
+unresolved App\Http\Controllers\UserController::audit @-:--- sig=- doc=-
+unresolved App\Listeners\Orphaned::handle @-:--- sig=- doc=-
+unresolved compact @-:--- sig=- doc=-
+unresolved config @-:--- sig=- doc=-
+unresolved event @-:--- sig=- doc=-
+unresolved view @-:--- sig=- doc=-
+unresolved view partials.missing @-:--- sig=- doc=-
+## EDGES
+class App\Events\UserRegistered @app/Events/UserRegistered.php -contains/extracted-> method App\Events\UserRegistered::__construct @app/Events/UserRegistered.php line=7 by=app/Events/UserRegistered.php reason=-
+class App\Http\Controllers\OrderController @app/Http/Controllers/OrderController.php -contains/extracted-> method App\Http\Controllers\OrderController::index @app/Http/Controllers/OrderController.php line=9 by=app/Http/Controllers/OrderController.php reason=-
+class App\Http\Controllers\OrderController @app/Http/Controllers/OrderController.php -contains/extracted-> method App\Http\Controllers\OrderController::store @app/Http/Controllers/OrderController.php line=14 by=app/Http/Controllers/OrderController.php reason=-
+class App\Http\Controllers\UserController @app/Http/Controllers/UserController.php -contains/extracted-> method App\Http\Controllers\UserController::index @app/Http/Controllers/UserController.php line=10 by=app/Http/Controllers/UserController.php reason=-
+class App\Http\Controllers\UserController @app/Http/Controllers/UserController.php -contains/extracted-> method App\Http\Controllers\UserController::show @app/Http/Controllers/UserController.php line=23 by=app/Http/Controllers/UserController.php reason=-
+class App\Http\Controllers\UserController @app/Http/Controllers/UserController.php -contains/extracted-> method App\Http\Controllers\UserController::store @app/Http/Controllers/UserController.php line=16 by=app/Http/Controllers/UserController.php reason=-
+class App\Listeners\Orphaned @app/Listeners/Orphaned.php -contains/extracted-> method App\Listeners\Orphaned::other @app/Listeners/Orphaned.php line=7 by=app/Listeners/Orphaned.php reason=-
+class App\Listeners\SendWelcomeEmail @app/Listeners/SendWelcomeEmail.php -contains/extracted-> method App\Listeners\SendWelcomeEmail::handle @app/Listeners/SendWelcomeEmail.php line=9 by=app/Listeners/SendWelcomeEmail.php reason=-
+class App\Models\Invoice @app/Models/Invoice.php -reads/extracted-> table billing_invoices @- line=9 by=app/Models/Invoice.php reason=-
+class App\Models\User @app/Models/User.php -reads/inferred-> table users @- line=7 by=app/Models/User.php reason=conventional table name of the model
+class App\Providers\AppServiceProvider @app/Providers/AppServiceProvider.php -contains/extracted-> method App\Providers\AppServiceProvider::register @app/Providers/AppServiceProvider.php line=11 by=app/Providers/AppServiceProvider.php reason=-
+class App\Services\StripeGateway @app/Services/StripeGateway.php -contains/extracted-> method App\Services\StripeGateway::charge @app/Services/StripeGateway.php line=9 by=app/Services/StripeGateway.php reason=-
+class App\Services\StripeGateway @app/Services/StripeGateway.php -implements/extracted-> type App\Contracts\PaymentGateway @app/Contracts/PaymentGateway.php line=7 by=app/Services/StripeGateway.php reason=-
+class App\Services\StripeGateway @app/Services/StripeGateway.php -implements/inferred-> type App\Contracts\PaymentGateway @app/Contracts/PaymentGateway.php line=13 by=app/Providers/AppServiceProvider.php reason=container binding
+file app/Contracts/PaymentGateway.php @app/Contracts/PaymentGateway.php -contains/extracted-> type App\Contracts\PaymentGateway @app/Contracts/PaymentGateway.php line=5 by=app/Contracts/PaymentGateway.php reason=-
+file app/Events/UserRegistered.php @app/Events/UserRegistered.php -contains/extracted-> class App\Events\UserRegistered @app/Events/UserRegistered.php line=5 by=app/Events/UserRegistered.php reason=-
+file app/Http/Controllers/OrderController.php @app/Http/Controllers/OrderController.php -contains/extracted-> class App\Http\Controllers\OrderController @app/Http/Controllers/OrderController.php line=7 by=app/Http/Controllers/OrderController.php reason=-
+file app/Http/Controllers/UserController.php @app/Http/Controllers/UserController.php -contains/extracted-> class App\Http\Controllers\UserController @app/Http/Controllers/UserController.php line=8 by=app/Http/Controllers/UserController.php reason=-
+file app/Http/Controllers/UserController.php @app/Http/Controllers/UserController.php -imports/extracted-> file app/Events/UserRegistered.php @app/Events/UserRegistered.php line=5 by=app/Http/Controllers/UserController.php reason=-
+file app/Http/Controllers/UserController.php @app/Http/Controllers/UserController.php -imports/extracted-> file app/Models/User.php @app/Models/User.php line=6 by=app/Http/Controllers/UserController.php reason=-
+file app/Listeners/Orphaned.php @app/Listeners/Orphaned.php -contains/extracted-> class App\Listeners\Orphaned @app/Listeners/Orphaned.php line=5 by=app/Listeners/Orphaned.php reason=-
+file app/Listeners/SendWelcomeEmail.php @app/Listeners/SendWelcomeEmail.php -contains/extracted-> class App\Listeners\SendWelcomeEmail @app/Listeners/SendWelcomeEmail.php line=7 by=app/Listeners/SendWelcomeEmail.php reason=-
+file app/Listeners/SendWelcomeEmail.php @app/Listeners/SendWelcomeEmail.php -imports/extracted-> file app/Events/UserRegistered.php @app/Events/UserRegistered.php line=5 by=app/Listeners/SendWelcomeEmail.php reason=-
+file app/Models/Helper.php @app/Models/Helper.php -contains/extracted-> class App\Models\Helper @app/Models/Helper.php line=6 by=app/Models/Helper.php reason=-
+file app/Models/Invoice.php @app/Models/Invoice.php -contains/extracted-> class App\Models\Invoice @app/Models/Invoice.php line=7 by=app/Models/Invoice.php reason=-
+file app/Models/User.php @app/Models/User.php -contains/extracted-> class App\Models\User @app/Models/User.php line=7 by=app/Models/User.php reason=-
+file app/Providers/AppServiceProvider.php @app/Providers/AppServiceProvider.php -contains/extracted-> class App\Providers\AppServiceProvider @app/Providers/AppServiceProvider.php line=9 by=app/Providers/AppServiceProvider.php reason=-
+file app/Providers/AppServiceProvider.php @app/Providers/AppServiceProvider.php -imports/extracted-> file app/Contracts/PaymentGateway.php @app/Contracts/PaymentGateway.php line=5 by=app/Providers/AppServiceProvider.php reason=-
+file app/Providers/AppServiceProvider.php @app/Providers/AppServiceProvider.php -imports/extracted-> file app/Services/StripeGateway.php @app/Services/StripeGateway.php line=6 by=app/Providers/AppServiceProvider.php reason=-
+file app/Providers/EventServiceProvider.php @app/Providers/EventServiceProvider.php -contains/extracted-> class App\Providers\EventServiceProvider @app/Providers/EventServiceProvider.php line=10 by=app/Providers/EventServiceProvider.php reason=-
+file app/Providers/EventServiceProvider.php @app/Providers/EventServiceProvider.php -imports/extracted-> file app/Events/UserRegistered.php @app/Events/UserRegistered.php line=5 by=app/Providers/EventServiceProvider.php reason=-
+file app/Providers/EventServiceProvider.php @app/Providers/EventServiceProvider.php -imports/extracted-> file app/Listeners/Orphaned.php @app/Listeners/Orphaned.php line=6 by=app/Providers/EventServiceProvider.php reason=-
+file app/Providers/EventServiceProvider.php @app/Providers/EventServiceProvider.php -imports/extracted-> file app/Listeners/SendWelcomeEmail.php @app/Listeners/SendWelcomeEmail.php line=7 by=app/Providers/EventServiceProvider.php reason=-
+file app/Services/StripeGateway.php @app/Services/StripeGateway.php -contains/extracted-> class App\Services\StripeGateway @app/Services/StripeGateway.php line=7 by=app/Services/StripeGateway.php reason=-
+file app/Services/StripeGateway.php @app/Services/StripeGateway.php -imports/extracted-> file app/Contracts/PaymentGateway.php @app/Contracts/PaymentGateway.php line=5 by=app/Services/StripeGateway.php reason=-
+file config/shop.php @config/shop.php -writes/extracted-> config_key shop.currency @- line=5 by=config/shop.php reason=-
+file config/shop.php @config/shop.php -writes/extracted-> config_key shop.theme @- line=4 by=config/shop.php reason=-
+file database/migrations/2024_01_01_create_users_table.php @database/migrations/2024_01_01_create_users_table.php -writes/extracted-> table users @- line=10 by=database/migrations/2024_01_01_create_users_table.php reason=-
+file resources/views/users/index.blade.php @resources/views/users/index.blade.php -imports/extracted-> file resources/views/layouts/app.blade.php @resources/views/layouts/app.blade.php line=1 by=resources/views/users/index.blade.php reason=-
+file resources/views/users/index.blade.php @resources/views/users/index.blade.php -imports/extracted-> file resources/views/partials/footer.blade.php @resources/views/partials/footer.blade.php line=4 by=resources/views/users/index.blade.php reason=-
+file resources/views/users/index.blade.php @resources/views/users/index.blade.php -imports/extracted-> unresolved view partials.missing @- line=5 by=resources/views/users/index.blade.php reason=view file not found
+file resources/views/welcome.blade.php @resources/views/welcome.blade.php -imports/extracted-> file resources/views/layouts/app.blade.php @resources/views/layouts/app.blade.php line=1 by=resources/views/welcome.blade.php reason=-
+file resources/views/welcome.blade.php @resources/views/welcome.blade.php -imports/extracted-> file resources/views/partials/footer.blade.php @resources/views/partials/footer.blade.php line=5 by=resources/views/welcome.blade.php reason=-
+file routes/web.php @routes/web.php -calls/extracted-> unresolved view @- line=8 by=routes/web.php reason=no definition found
+file routes/web.php @routes/web.php -contains/extracted-> route DELETE /orders/{order} @routes/web.php line=19 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route GET / @routes/web.php line=7 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route GET /admin/audit @routes/web.php line=16 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route GET /admin/users/{user} @routes/web.php line=15 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route GET /gone @routes/web.php line=22 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route GET /legacy @routes/web.php line=21 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route GET /orders @routes/web.php line=19 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route GET /orders/create @routes/web.php line=19 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route GET /orders/{order} @routes/web.php line=19 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route GET /orders/{order}/edit @routes/web.php line=19 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route GET /users @routes/web.php line=11 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route POST /orders @routes/web.php line=19 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route POST /users @routes/web.php line=12 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -contains/extracted-> route PUT|PATCH /orders/{order} @routes/web.php line=19 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -imports/extracted-> file app/Http/Controllers/OrderController.php @app/Http/Controllers/OrderController.php line=3 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -imports/extracted-> file app/Http/Controllers/UserController.php @app/Http/Controllers/UserController.php line=4 by=routes/web.php reason=-
+file routes/web.php @routes/web.php -imports/extracted-> file resources/views/welcome.blade.php @resources/views/welcome.blade.php line=8 by=routes/web.php reason=-
+method App\Http\Controllers\OrderController::index @app/Http/Controllers/OrderController.php -handles_route/extracted-> route GET /orders @routes/web.php line=19 by=routes/web.php reason=-
+method App\Http\Controllers\OrderController::index @app/Http/Controllers/OrderController.php -reads/extracted-> table orders @- line=11 by=app/Http/Controllers/OrderController.php reason=-
+method App\Http\Controllers\OrderController::store @app/Http/Controllers/OrderController.php -handles_route/extracted-> route POST /orders @routes/web.php line=19 by=routes/web.php reason=-
+method App\Http\Controllers\OrderController::store @app/Http/Controllers/OrderController.php -writes/extracted-> table orders @- line=16 by=app/Http/Controllers/OrderController.php reason=-
+method App\Http\Controllers\UserController::index @app/Http/Controllers/UserController.php -calls/extracted-> unresolved config @- line=12 by=app/Http/Controllers/UserController.php reason=no definition found
+method App\Http\Controllers\UserController::index @app/Http/Controllers/UserController.php -calls/extracted-> unresolved view @- line=13 by=app/Http/Controllers/UserController.php reason=no definition found
+method App\Http\Controllers\UserController::index @app/Http/Controllers/UserController.php -handles_route/extracted-> route GET /legacy @routes/web.php line=21 by=routes/web.php reason=-
+method App\Http\Controllers\UserController::index @app/Http/Controllers/UserController.php -handles_route/extracted-> route GET /users @routes/web.php line=11 by=routes/web.php reason=-
+method App\Http\Controllers\UserController::index @app/Http/Controllers/UserController.php -imports/extracted-> file resources/views/users/index.blade.php @resources/views/users/index.blade.php line=13 by=app/Http/Controllers/UserController.php reason=-
+method App\Http\Controllers\UserController::index @app/Http/Controllers/UserController.php -reads/extracted-> config_key shop.theme @- line=12 by=app/Http/Controllers/UserController.php reason=-
+method App\Http\Controllers\UserController::show @app/Http/Controllers/UserController.php -calls/extracted-> unresolved compact @- line=25 by=app/Http/Controllers/UserController.php reason=no definition found
+method App\Http\Controllers\UserController::show @app/Http/Controllers/UserController.php -calls/extracted-> unresolved view @- line=25 by=app/Http/Controllers/UserController.php reason=no definition found
+method App\Http\Controllers\UserController::show @app/Http/Controllers/UserController.php -handles_route/extracted-> route GET /admin/users/{user} @routes/web.php line=15 by=routes/web.php reason=-
+method App\Http\Controllers\UserController::show @app/Http/Controllers/UserController.php -imports/extracted-> file resources/views/users/show.blade.php @resources/views/users/show.blade.php line=25 by=app/Http/Controllers/UserController.php reason=-
+method App\Http\Controllers\UserController::store @app/Http/Controllers/UserController.php -calls/extracted-> method App\Events\UserRegistered::__construct @app/Events/UserRegistered.php line=19 by=app/Http/Controllers/UserController.php reason=-
+method App\Http\Controllers\UserController::store @app/Http/Controllers/UserController.php -calls/extracted-> unresolved event @- line=19 by=app/Http/Controllers/UserController.php reason=no definition found
+method App\Http\Controllers\UserController::store @app/Http/Controllers/UserController.php -calls/extracted-> unresolved view @- line=20 by=app/Http/Controllers/UserController.php reason=no definition found
+method App\Http\Controllers\UserController::store @app/Http/Controllers/UserController.php -fires_hook/extracted-> hook App\Events\UserRegistered @- line=19 by=app/Http/Controllers/UserController.php reason=-
+method App\Http\Controllers\UserController::store @app/Http/Controllers/UserController.php -handles_route/extracted-> route POST /users @routes/web.php line=12 by=routes/web.php reason=-
+method App\Http\Controllers\UserController::store @app/Http/Controllers/UserController.php -imports/extracted-> file resources/views/users/show.blade.php @resources/views/users/show.blade.php line=20 by=app/Http/Controllers/UserController.php reason=-
+method App\Listeners\SendWelcomeEmail::handle @app/Listeners/SendWelcomeEmail.php -registers_hook/extracted-> hook App\Events\UserRegistered @- line=14 by=app/Providers/EventServiceProvider.php reason=-
+method App\Listeners\SendWelcomeEmail::handle @app/Listeners/SendWelcomeEmail.php -registers_hook/extracted-> hook App\Events\UserRegistered @- line=9 by=app/Listeners/SendWelcomeEmail.php reason=-
+method App\Services\StripeGateway::charge @app/Services/StripeGateway.php -calls/extracted-> unresolved config @- line=11 by=app/Services/StripeGateway.php reason=no definition found
+method App\Services\StripeGateway::charge @app/Services/StripeGateway.php -reads/extracted-> config_key services.stripe.key @- line=11 by=app/Services/StripeGateway.php reason=-
+type App\Contracts\PaymentGateway @app/Contracts/PaymentGateway.php -contains/extracted-> method App\Contracts\PaymentGateway::charge @app/Contracts/PaymentGateway.php line=7 by=app/Contracts/PaymentGateway.php reason=-
+unresolved App\Http\Controllers\GhostController @- -handles_route/extracted-> route GET /gone @routes/web.php line=22 by=routes/web.php reason=controller class not found
+unresolved App\Http\Controllers\UserController::audit @- -handles_route/extracted-> route GET /admin/audit @routes/web.php line=16 by=routes/web.php reason=controller action not found
+unresolved App\Listeners\Orphaned::handle @- -registers_hook/extracted-> hook App\Events\UserRegistered @- line=15 by=app/Providers/EventServiceProvider.php reason=listener has no handle or __invoke method
