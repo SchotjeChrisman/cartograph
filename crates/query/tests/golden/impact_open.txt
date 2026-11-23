@@ -1,0 +1,4 @@
+impact of @1c02 function net::read_all  src/net/socket.rs:50  [net]: 3 affected (d1=1 d2=1 d3=1)
+d1 @5362 method net::Socket::connect  src/net/socket.rs:30  [net]
+d2 @72cb function app::run  src/app/run.rs:3  [core]
+d3 @2e52 function app::main  src/app/main.rs:5  [core]

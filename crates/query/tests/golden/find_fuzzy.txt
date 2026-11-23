@@ -1,0 +1,2 @@
+find `read all`:
+@1c02 function net::read_all  src/net/socket.rs:50  [net]  edges=4

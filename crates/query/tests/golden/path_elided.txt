@@ -1,0 +1,5 @@
+path @2e52 -> @3472: 4 hops
+   @2e52 function app::main  src/app/main.rs:5  [core]
+   ... 3 nodes omitted ...
+-calls-> @3472 function zlib::inflate  vendor/zlib/inflate.c:100  vendored
++3 more. Next: cartograph path @2e52 @3472 --budget 180

@@ -1,0 +1,12 @@
+#1 Application  Connects to a server and shows what it sends.  [app]: children 3
+#4 core
+#2 Networking  Sockets and reading from them.  [io, net]
+#3 Interface  Windows and drawing.  (out of date)
+key symbols:
+@5362 method net::Socket::connect  src/net/socket.rs:30  [net]  edges=5
+@1c02 function net::read_all  src/net/socket.rs:50  [net]  edges=4
+@330e function net::open  src/net/socket.rs:10  [net]  edges=4
+@72cb function app::run  src/app/run.rs:3  [core]  edges=4
+@19ce method ui::Window::draw  src/ui/window.rs:20  [ui]  edges=2
+@2653 function ui::open  src/ui/window.rs:8  [ui]  edges=2
+@2e52 function app::main  src/app/main.rs:5  [core]  edges=1

@@ -1,0 +1,6 @@
+path @2e52 -> @3472: 4 hops
+   @2e52 function app::main  src/app/main.rs:5  [core]
+-calls-> @72cb function app::run  src/app/run.rs:3  [core]
+-calls-> @5362 method net::Socket::connect  src/net/socket.rs:30  [net]
+-calls inferred-> @1c02 function net::read_all  src/net/socket.rs:50  [net]
+-calls-> @3472 function zlib::inflate  vendor/zlib/inflate.c:100  vendored

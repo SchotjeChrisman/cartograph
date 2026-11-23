@@ -1,0 +1,4 @@
+find `open`:
+@330e function net::open  src/net/socket.rs:10  [net]  edges=4
+@2653 function ui::open  src/ui/window.rs:8  [ui]  edges=2
+@06d8 function zlib::open  vendor/zlib/inflate.c:200  vendored  edges=0

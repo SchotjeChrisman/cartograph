@@ -1,0 +1,2 @@
+callers of @330e function net::open  src/net/socket.rs:10  [net] (depth 1, 1 found)
+<- @19ce method ui::Window::draw  src/ui/window.rs:20  [ui]  calls@src/ui/window.rs:22

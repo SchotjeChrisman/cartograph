@@ -1,0 +1,9 @@
+coverage: 7 files
+c: parsed 1
+python: unparsed 1
+rust: parsed 4, parse_failed 1
+edges: contains 3 (extracted 3); calls 11 (extracted 10, inferred 1)
+unresolved calls: 2, 81.8% of calls resolved
+not parsed: 2 files
+  scripts/build.py unparsed
+  src/broken.rs parse_failed: syntax error at line 3

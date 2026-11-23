@@ -1,0 +1,6 @@
+neighbours of @5362 method net::Socket::connect  src/net/socket.rs:30  [net] (depth 1, 5 found)
+-> @330e function net::open  src/net/socket.rs:10  [net]  calls@src/net/socket.rs:32
+-> @1c02 function net::read_all  src/net/socket.rs:50  [net]  calls@src/net/socket.rs:34  inferred(same-name function in scope)
+<- @1e1b file src/net/socket.rs  src/net/socket.rs:1  [net]  contains@src/net/socket.rs:30
+<- @72cb function app::run  src/app/run.rs:3  [core]  calls@src/app/run.rs:5
+-> @06ba unresolved missing_fn  calls@src/net/socket.rs:35

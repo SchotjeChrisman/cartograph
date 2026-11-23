@@ -1,0 +1,4 @@
+contents of @1e1b file src/net/socket.rs  src/net/socket.rs:1  [net] (depth 1, 3 found)
+-> @5362 method net::Socket::connect  src/net/socket.rs:30  [net]  contains@src/net/socket.rs:30
+-> @330e function net::open  src/net/socket.rs:10  [net]  contains@src/net/socket.rs:10
+-> @1c02 function net::read_all  src/net/socket.rs:50  [net]  contains@src/net/socket.rs:50
