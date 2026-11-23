@@ -1,0 +1,22 @@
+[package]
+name = "cli"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+graph.workspace = true
+languages.workspace = true
+index.workspace = true
+cluster.workspace = true
+query.workspace = true
+describe.workspace = true
+map.workspace = true
+clap.workspace = true
+ignore.workspace = true
+serde_json.workspace = true
+toml.workspace = true
+
+[[bin]]
+name = "cartograph"
+path = "src/main.rs"
