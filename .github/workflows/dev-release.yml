@@ -1,0 +1,93 @@
+name: dev-release
+
+# Every push to main builds a prerelease for testing. Tagged releases stay in release.yml.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dev-release
+  cancel-in-progress: false
+
+env:
+  DEV_RELEASES_KEPT: 10
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test --locked --workspace
+
+  build:
+    name: build ${{ matrix.target }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: x86_64-unknown-linux-musl, runner: ubuntu-24.04, musl: true }
+          - { target: aarch64-unknown-linux-musl, runner: ubuntu-24.04-arm, musl: true }
+          - { target: aarch64-apple-darwin, runner: macos-14, musl: false }
+          - { target: x86_64-apple-darwin, runner: macos-14, musl: false }
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the musl C toolchain
+        if: matrix.musl
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      # The map frontend is committed prebuilt (crates/map/frontend/dist) and embedded by the binary.
+      - name: Build
+        run: cargo build --locked --release --package cli --target ${{ matrix.target }}
+
+      - name: Package
+        run: |
+          name="cartograph-dev-${GITHUB_RUN_NUMBER}-${GITHUB_SHA::7}-${{ matrix.target }}"
+          mkdir "$name"
+          cp "target/${{ matrix.target }}/release/cartograph" "$name/"
+          tar czf "$name.tar.gz" "$name"
+          shasum -a 256 "$name.tar.gz" > "$name.tar.gz.sha256"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cartograph-${{ matrix.target }}
+          path: |
+            cartograph-dev-*.tar.gz
+            cartograph-dev-*.tar.gz.sha256
+
+  publish:
+    needs: [test, build]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create the prerelease
+        run: |
+          tag="dev-${GITHUB_RUN_NUMBER}-${GITHUB_SHA::7}"
+          gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "dev build ${GITHUB_RUN_NUMBER} (${GITHUB_SHA::7})" \
+            --notes "Development build of ${GITHUB_SHA} for testing. Not a stable release." dist/*
+
+      - name: Delete old dev prereleases
+        run: |
+          gh release list --repo "$GITHUB_REPOSITORY" --limit 200 --json tagName,createdAt \
+            --jq '[.[] | select(.tagName | startswith("dev-"))] | sort_by(.createdAt) | reverse | .['"$DEV_RELEASES_KEPT"':][].tagName' |
+            while read -r old; do
+              gh release delete "$old" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
+            done
