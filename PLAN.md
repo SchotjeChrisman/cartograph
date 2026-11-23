@@ -84,7 +84,7 @@ Crates: graph (types + SQLite store), index (walker + parsing), languages (one m
 3. **Cluster + describe.** Hierarchical components, pluggable backends, hash-keyed cache, overrides.
 4. **Map.** Served React map, canvas boxes and arrows, panels, lazy describe from the map; headless-browser check.
 5. **Laravel plugin, `links.yaml`, agent install and strict hook.**
-6. After real use: `watch`, more languages, git-diff impact summaries, and the parked Herdr desktop work.
+6. After real use: `watch`, more languages and git-diff impact summaries.
 
 ## Tests
 - Per language: fixture repo with expected edges as a golden file; the test fails if an expected edge is missing or an unexpected `unresolved` appears.
@@ -94,8 +94,13 @@ Crates: graph (types + SQLite store), index (walker + parsing), languages (one m
 - Map: headless render of a fixture graph, no console errors.
 - Benchmark script against Gecko recording index time, memory and query latency.
 
-## Parked
-- Herdr desktop app integration (sidebar next to the agents, full view with the agent's chat). The app has no extension API visible from this machine; revisit with its docs, or fall back to driving `hc` terminals labelled `herdr.space`.
+## Herdr mod
+- A Herdr desktop app mod (Herdr.app 0.1.16; the API is `~/.config/herdr-app/AGENTS.md`, `herdr.d.ts` and `gpui-kit.d.ts`). Source in `integrations/herdr/`, installed by symlinking `~/.config/herdr-app/mods/cartograph` to it. Plain JavaScript on Herdr's gpui-kit, no dependencies.
+- Data comes only from the CLI: `cartograph --json overview [--component <id>]` per expand, run with `exec` in the folder, cached per folder and component until Refresh. No Rust changes, no server.
+- Sidebar (default, docked on the left next to the agents): follows the focused agent's or space's folder; the system > subsystem > component tree, foldable, name and one-line description per node, stale components greyed with "(stale)"; the selected node's description, key symbols and command under the tree; repo name and Refresh on top, file count and graph age at the bottom; clear states for cartograph not on PATH, no graph (shows `cartograph index`), indexing in progress and CLI errors (stderr shown as is); "Open full view".
+- Full view (the same mod with props `{view: "full", folder, terminal}`): a new tab with the map and, split beside it, the focused agent's own terminal (`hc attach`), so the chat is the agent itself. Breadcrumb, the current component's children as boxes with descriptions, click drills in; a detail panel with description, key symbols, the equivalent command and "Ask agent about this", which types a prompt naming the component and its command into the agent's terminal (`hc send`).
+- No arrows between boxes: the CLI JSON has no component-to-component links (they exist only in the map server's `/api/level`). The detail panel lists the strongest links instead, counted from `explore` on the box's key symbols.
+- A `cartograph` prop, or the mod copy's `cartograph` localStorage key, points the mod at another executable (used for testing with a fake).
 
 ## Still to settle at build time
 - Describer backend trait signature and overrides.toml format.
