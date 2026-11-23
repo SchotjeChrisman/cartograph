@@ -1,0 +1,80 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build ${{ matrix.target }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: x86_64-unknown-linux-musl, runner: ubuntu-24.04, musl: true }
+          - { target: aarch64-unknown-linux-musl, runner: ubuntu-24.04-arm, musl: true }
+          - { target: aarch64-apple-darwin, runner: macos-14, musl: false }
+          - { target: x86_64-apple-darwin, runner: macos-14, musl: false }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build the map frontend, which the binary embeds
+        working-directory: crates/map/frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install the musl C toolchain
+        if: matrix.musl
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Test
+        # Only where the host can run the binary it builds.
+        if: matrix.target != 'x86_64-apple-darwin'
+        run: cargo test --locked --workspace --target ${{ matrix.target }}
+
+      - name: Build
+        run: cargo build --locked --release --package cli --target ${{ matrix.target }}
+
+      - name: Package
+        run: |
+          name="cartograph-${GITHUB_REF_NAME}-${{ matrix.target }}"
+          mkdir "$name"
+          cp "target/${{ matrix.target }}/release/cartograph" "$name/"
+          tar czf "$name.tar.gz" "$name"
+          shasum -a 256 "$name.tar.gz" > "$name.tar.gz.sha256"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cartograph-${{ matrix.target }}
+          path: |
+            cartograph-*.tar.gz
+            cartograph-*.tar.gz.sha256
+
+  publish:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --generate-notes dist/*
