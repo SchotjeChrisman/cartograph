@@ -1,0 +1,9 @@
+[package]
+name = "cluster"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+graph.workspace = true
+blake3.workspace = true
