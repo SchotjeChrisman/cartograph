@@ -69,6 +69,21 @@ fn ambiguous_names_stay_unresolved_nodes_in_every_new_language() {
 }
 
 #[test]
+fn only_the_cartograph_ignore_file_excludes_paths() {
+    let tree = crate::common::TestDir::new("coverage-cartographignore");
+    tree.write("src/kept.rs", "fn kept() {}\n");
+    tree.write("shared/content.rs", "fn content() {}\n");
+    tree.write("tools/searched.rs", "fn searched() {}\n");
+    tree.write(".cartographignore", "shared/\n");
+    tree.write(".ignore", "tools/\n");
+    index(tree.path());
+    let dump = crate::common::dump(tree.path(), false);
+    assert!(dump.contains("src/kept.rs "), "{dump}");
+    assert!(dump.contains("tools/searched.rs "), "{dump}");
+    assert!(!dump.contains("shared/content.rs"), "{dump}");
+}
+
+#[test]
 fn a_malformed_links_file_is_reported_not_skipped() {
     let tree = crate::common::TestDir::new("coverage-links-malformed");
     tree.write("links.yaml", "links:\n  - to: [broken]\n    kind: x\n");

@@ -1,6 +1,6 @@
-//! The file walk: the only place that lists directories. It respects `.gitignore`, tags each
-//! file with its repository and reports nested graphs; reading file contents is left to the
-//! parsing stage.
+//! The file walk: the only place that lists directories. It respects `.gitignore` and
+//! `.cartographignore`, tags each file with its repository and reports nested graphs; reading
+//! file contents is left to the parsing stage.
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -13,6 +13,9 @@ use crate::error::Result;
 
 const GRAPH_DIR_NAME: &str = ".cartograph";
 const GIT_ENTRY: &str = ".git";
+/// Gitignore syntax, read only by cartograph: the generic `.ignore` is shared with ripgrep and
+/// other tools, so excluding something there would hide it from them too.
+const IGNORE_FILE_NAME: &str = ".cartographignore";
 /// The repo tag for files whose nearest `.git` is the root itself.
 const ROOT_REPO: &str = ".";
 
@@ -42,6 +45,8 @@ pub fn scan(root: &Path, config: &Config) -> Result<Scan> {
     let mut builder = WalkBuilder::new(root);
     builder
         .hidden(false)
+        .ignore(false)
+        .add_custom_ignore_filename(IGNORE_FILE_NAME)
         .require_git(false)
         .git_global(false)
         .parents(false)
