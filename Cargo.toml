@@ -1,0 +1,45 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[workspace.dependencies]
+# Internal crates; dependencies point one way: cli -> query/describe/map/cluster/index -> languages -> graph.
+graph = { path = "crates/graph" }
+languages = { path = "crates/languages" }
+index = { path = "crates/index" }
+cluster = { path = "crates/cluster" }
+query = { path = "crates/query" }
+describe = { path = "crates/describe" }
+map = { path = "crates/map" }
+
+# Parsing
+tree-sitter = "0.27.2"
+tree-sitter-c = "0.24.2"
+tree-sitter-cpp = "0.23.4"
+tree-sitter-rust = "0.24.2"
+tree-sitter-javascript = "0.25.0"
+tree-sitter-typescript = "0.23.2"
+tree-sitter-php = "0.25.2"
+
+# Storage and hashing
+rusqlite = { version = "0.43.0", features = ["bundled"] }
+blake3 = "1.8.7"
+
+# Walking and parallelism
+ignore = "0.4.34"
+rayon = "1.12.0"
+
+# Serialization and config
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+toml = "1.2.1"
+
+# CLI and map server
+clap = { version = "4.6.9", features = ["derive"] }
+tiny_http = "0.12.0"
+rust-embed = { version = "8.14.0", features = ["debug-embed"] }
