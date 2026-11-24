@@ -272,3 +272,28 @@ fn an_empty_graph_gives_an_empty_tree() {
     let tree = compute(&[], &[], &Previous::default(), &Config::default());
     assert!(tree.components.is_empty() && tree.file_components.is_empty());
 }
+
+#[test]
+fn a_single_directory_with_two_call_clusters_splits() {
+    let files: Vec<FileRow> = (1..=8).map(|id| file(id, &format!("src/f{id}.rs"))).collect();
+    let mut links = Vec::new();
+    for base in [1, 5] {
+        for a in base..base + 4 {
+            for b in (a + 1)..base + 4 {
+                links.push(link(a, b, 10));
+            }
+        }
+    }
+    links.push(link(4, 5, 1));
+    let config = Config {
+        resolutions: vec![0.3, 1.0],
+        ..Config::default()
+    };
+
+    let tree = compute(&files, &links, &Previous::default(), &config);
+
+    let leaf = leaf_of(&tree);
+    assert_eq!(leaf["src/f1.rs"], leaf["src/f4.rs"]);
+    assert_eq!(leaf["src/f5.rs"], leaf["src/f8.rs"]);
+    assert_ne!(leaf["src/f1.rs"], leaf["src/f5.rs"]);
+}

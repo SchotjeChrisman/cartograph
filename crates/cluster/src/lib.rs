@@ -60,6 +60,7 @@ pub fn compute(
     let clusters = hierarchy::collapse(hierarchy::build(
         &clustered,
         &file_graph,
+        links,
         &config.resolutions,
     ));
     tree::build(&clustered, &clusters, previous)
