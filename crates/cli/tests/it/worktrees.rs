@@ -8,17 +8,37 @@ const SOURCE: &str = "pub fn leaf() {}\n";
 
 fn bare_clone(name: &str, worktrees: &[&str]) -> TestDir {
     let project = TestDir::new(name);
-    project.write(".git", "gitdir: ./.bare\n");
-    project.write(".bare/config", "[core]\n\tbare = true\n");
-    project.write(".shared/stray.rs", SOURCE);
+    lay_out_bare_clone(&project, "", worktrees);
+    project
+}
+
+/// Writes the layout into `top`, under `prefix` (empty, or a folder name ending in `/`).
+fn lay_out_bare_clone(top: &TestDir, prefix: &str, worktrees: &[&str]) {
+    top.write(&format!("{prefix}.git"), "gitdir: ./.bare\n");
+    top.write(&format!("{prefix}.bare/config"), "[core]\n\tbare = true\n");
+    top.write(&format!("{prefix}.shared/stray.rs"), SOURCE);
     for worktree in worktrees {
-        project.write(&format!("{worktree}/src/lib.rs"), SOURCE);
-        project.write(
-            &format!("{worktree}/.git"),
+        top.write(&format!("{prefix}{worktree}/src/lib.rs"), SOURCE);
+        top.write(
+            &format!("{prefix}{worktree}/.git"),
             &format!("gitdir: ../.bare/worktrees/{worktree}\n"),
         );
     }
-    project
+}
+
+#[test]
+fn the_worktree_graph_wins_over_a_graph_further_up() {
+    let outer = TestDir::new("bare-outer");
+    outer.write("elsewhere.rs", "pub fn elsewhere() {}\n");
+    ok(outer.path(), &["index"]);
+    lay_out_bare_clone(&outer, "project/", &["main", "develop"]);
+    let project = outer.path().join("project");
+    ok(&project.join("develop"), &["index"]);
+
+    let found = ok(&project, &["find", "leaf"]);
+
+    assert!(found.contains("src/lib.rs"), "{found}");
+    assert!(!project.join(".cartograph").exists());
 }
 
 #[test]

@@ -25,21 +25,27 @@ pub fn index_target(explicit: Option<&Path>) -> Result<PathBuf> {
     Ok(only_worktree_graph(&root)?.unwrap_or(root))
 }
 
-/// The directory a query reads: the explicit root, else the nearest ancestor of the working
-/// directory that holds a graph, else the one linked worktree inside it that holds a graph, else
-/// the working directory itself (which then reports "no graph" with the path it looked at).
+/// The directory a query reads: the explicit root, else the working directory when it holds a
+/// graph, else the one linked worktree inside it that holds a graph, else the nearest ancestor
+/// that holds one, else the working directory itself (which then reports "no graph" with the path
+/// it looked at). The worktree comes before the ancestors so a stray graph higher up, such as one
+/// in the home folder, cannot hide the project's own.
 pub fn graph_root(explicit: Option<&Path>) -> Result<PathBuf> {
     if explicit.is_some() {
         return index_root(explicit);
     }
     let start = std::env::current_dir()?.canonicalize()?;
-    let found = start
-        .ancestors()
-        .find(|candidate| GraphDir::of_root(candidate).database_path().exists());
-    if let Some(found) = found {
-        return Ok(found.to_path_buf());
+    if !holds_graph(&start)
+        && let Some(worktree) = only_worktree_graph(&start)?
+    {
+        return Ok(worktree);
     }
-    Ok(only_worktree_graph(&start)?.unwrap_or(start))
+    let found = start.ancestors().find(|candidate| holds_graph(candidate));
+    Ok(found.unwrap_or(&start).to_path_buf())
+}
+
+fn holds_graph(directory: &Path) -> bool {
+    GraphDir::of_root(directory).database_path().exists()
 }
 
 /// The single linked worktree directly inside `directory` that holds a graph; an error when
