@@ -1,6 +1,6 @@
 name: dev-release
 
-# Every push to main builds a prerelease for testing. Tagged releases stay in release.yml.
+# Every push to main replaces the one rolling prerelease, tagged `dev`, for testing. Tagged releases stay in release.yml.
 on:
   push:
     branches: [main]
@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  DEV_RELEASES_KEPT: 10
+  ROLLING_TAG: dev
 
 jobs:
   test:
@@ -77,17 +77,19 @@ jobs:
           path: dist
           merge-multiple: true
 
-      - name: Create the prerelease
+      - name: Replace the rolling prerelease
         run: |
-          tag="dev-${GITHUB_RUN_NUMBER}-${GITHUB_SHA::7}"
-          gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --title "dev build ${GITHUB_RUN_NUMBER} (${GITHUB_SHA::7})" \
+          if gh release view "$ROLLING_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release delete "$ROLLING_TAG" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
+          fi
+          gh release create "$ROLLING_TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "dev build (${GITHUB_SHA::7})" \
             --notes "Development build of ${GITHUB_SHA} for testing. Not a stable release." dist/*
 
-      - name: Delete old dev prereleases
+      - name: Delete the numbered dev prereleases of the old scheme
         run: |
-          gh release list --repo "$GITHUB_REPOSITORY" --limit 200 --json tagName,createdAt \
-            --jq '[.[] | select(.tagName | startswith("dev-"))] | sort_by(.createdAt) | reverse | .['"$DEV_RELEASES_KEPT"':][].tagName' |
+          gh release list --repo "$GITHUB_REPOSITORY" --limit 200 --json tagName \
+            --jq '.[] | select(.tagName | startswith("dev-")) | .tagName' |
             while read -r old; do
               gh release delete "$old" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
             done
