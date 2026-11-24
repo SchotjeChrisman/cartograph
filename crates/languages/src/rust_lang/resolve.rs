@@ -347,8 +347,8 @@ impl<'p, 'a> Resolver<'p, 'a> {
         let rest: Vec<&str> = segments.collect();
         let with_rest = |base: &str| join_qualified(base, &rest);
         match first {
-            "crate" => self.exact(&with_rest(crate_of(scope)), true),
-            "self" => self.exact(&with_rest(scope), true),
+            "crate" => self.exact(&with_rest(crate_of(scope)), true, depth),
+            "self" => self.exact(&with_rest(scope), true, depth),
             "super" => {
                 let mut base = scope;
                 let mut remaining = rest.as_slice();
@@ -357,10 +357,10 @@ impl<'p, 'a> Resolver<'p, 'a> {
                     base = parent_module(base);
                     remaining = after;
                 }
-                self.exact(&join_qualified(base, remaining), true)
+                self.exact(&join_qualified(base, remaining), true, depth)
             }
             "Self" => match receiver_type {
-                Some(receiver) => self.exact(&with_rest(receiver), true),
+                Some(receiver) => self.exact(&with_rest(receiver), true, depth),
                 None => Lookup::External,
             },
             _ => self.lookup_unanchored(scope, receiver_type, first, &rest, depth),
@@ -381,10 +381,10 @@ impl<'p, 'a> Resolver<'p, 'a> {
         }
         let as_written = join_qualified(first, rest);
         if self.is_project_crate(first) {
-            return self.exact(&as_written, true);
+            return self.exact(&as_written, true, depth);
         }
         let local = format!("{scope}::{as_written}");
-        if let Lookup::Found(hits) = self.exact(&local, false) {
+        if let Lookup::Found(hits) = self.exact(&local, false, depth) {
             return Lookup::Found(hits);
         }
         for glob in &self.globs {
@@ -395,7 +395,7 @@ impl<'p, 'a> Resolver<'p, 'a> {
                 _ => None,
             };
             if let Some(module) = module
-                && let Lookup::Found(hits) = self.exact(&format!("{module}::{as_written}"), false)
+                && let Lookup::Found(hits) = self.exact(&format!("{module}::{as_written}"), false, depth)
             {
                 return Lookup::Found(hits);
             }
@@ -429,12 +429,16 @@ impl<'p, 'a> Resolver<'p, 'a> {
             .any(|package| package.name == name)
     }
 
-    /// Looks up a fully qualified name. A miss under `internal` is a dangling path unless its
-    /// parent is a type, which means an enum variant or associated item the index does not model.
-    fn exact(&self, qualified_name: &str, internal: bool) -> Lookup<'a> {
+    /// Looks up a fully qualified name. A miss under `internal` is first tried as a re-export
+    /// (`pub use`) of the module that should hold it, then is a dangling path unless its parent
+    /// is a type, which means an enum variant or associated item the index does not model.
+    fn exact(&self, qualified_name: &str, internal: bool, depth: u32) -> Lookup<'a> {
         let hits = self.project.qualified(qualified_name);
         if !hits.is_empty() {
             return Lookup::Found(hits.to_vec());
+        }
+        if internal && let Some(found) = self.reexported(qualified_name, depth) {
+            return found;
         }
         let parent_is_type = qualified_name.rsplit_once("::").is_some_and(|(parent, _)| {
             self.project
@@ -446,6 +450,27 @@ impl<'p, 'a> Resolver<'p, 'a> {
             Lookup::Dangling
         } else {
             Lookup::External
+        }
+    }
+
+    /// What `module::name` means when `module` does not define `name` but imports it, usually
+    /// through `pub use`. Resolved the way the module's own file would resolve the bare name.
+    fn reexported(&self, qualified_name: &str, depth: u32) -> Option<Lookup<'a>> {
+        if depth > MAX_ALIAS_DEPTH {
+            return None;
+        }
+        let (module, name) = qualified_name.rsplit_once("::")?;
+        let module_file = self
+            .project
+            .qualified(module)
+            .iter()
+            .find(|found| found.definition.kind == NodeKind::Module)?
+            .file;
+        let extraction = self.project.extraction(module_file)?;
+        let owner = Resolver::new(module_file, extraction, self.project);
+        match owner.lookup_unanchored(module, None, name, &[], depth + 1) {
+            Lookup::Found(hits) => Some(Lookup::Found(hits)),
+            _ => None,
         }
     }
 }

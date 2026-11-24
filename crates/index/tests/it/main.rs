@@ -5,4 +5,5 @@ mod coverage;
 mod golden;
 mod incremental;
 mod mixed;
+mod rust_reexports;
 mod synthetic;
