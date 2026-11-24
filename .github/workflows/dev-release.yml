@@ -47,6 +47,8 @@ jobs:
 
       # The map frontend is committed prebuilt (crates/map/frontend/dist) and embedded by the binary.
       - name: Build
+        env:
+          CARTOGRAPH_BUILD_COMMIT: ${{ github.sha }}
         run: cargo build --locked --release --package cli --target ${{ matrix.target }}
 
       - name: Package

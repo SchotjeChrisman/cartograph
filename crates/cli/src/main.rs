@@ -9,6 +9,7 @@ mod install;
 mod mcp;
 mod orientation;
 mod stale_components;
+mod update;
 mod workspace;
 
 use std::io::{self, Write};
@@ -21,7 +22,9 @@ use args::{Cli, Command};
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 fn main() -> ExitCode {
-    match run(Cli::parse()) {
+    let cli = Cli::parse();
+    update::update_if_newer();
+    match run(cli) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             eprintln!("error: {error}");
