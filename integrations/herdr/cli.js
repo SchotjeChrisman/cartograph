@@ -7,19 +7,30 @@ import { COVERAGE_ARGS, exploreArgs, overviewArgs, parseLocation, runResult, sta
 const QUERY_TIMEOUT_MS = 120 * 1000;
 const LOCATE_TIMEOUT_MS = 10 * 1000;
 
-// Walks up like the CLI's workspace::graph_root does. `date -r <file>` prints a file's
+// Walks up like the CLI's workspace::graph_root does, then falls back to the one linked worktree
+// directly inside the folder that holds a graph (a bare-clone project's top); several such
+// worktrees count as none, as the CLI refuses to guess. `date -r <file>` prints a file's
 // modification time on both BSD and GNU date; the WAL file is newer while writes wait for a
 // checkpoint.
-const LOCATE_SCRIPT = `d=$1
+const LOCATE_SCRIPT = `found() {
+  printf '%s\\n' "$1"
+  for f in "$1/.cartograph/graph.db" "$1/.cartograph/graph.db-wal"; do [ -f "$f" ] && date -r "$f" +%s; done
+  exit 0
+}
+d=$1
 while :; do
-  if [ -f "$d/.cartograph/graph.db" ]; then
-    printf '%s\\n' "$d"
-    for f in "$d/.cartograph/graph.db" "$d/.cartograph/graph.db-wal"; do [ -f "$f" ] && date -r "$f" +%s; done
-    exit 0
-  fi
-  [ "$d" = / ] && exit 1
+  [ -f "$d/.cartograph/graph.db" ] && found "$d"
+  [ "$d" = / ] && break
   d=$(dirname "$d")
-done`;
+done
+only= count=0
+for w in "$1"/*/ "$1"/.[!.]*/; do
+  w=\${w%/}
+  [ -f "$w/.cartograph/graph.db" ] && grep -Eqs '^gitdir: *(.*/)?worktrees/' "$w/.git" || continue
+  only=$w count=$((count + 1))
+done
+[ "$count" = 1 ] && found "$only"
+exit 1`;
 
 const DEFAULT_EXECUTABLE = "cartograph";
 const EXECUTABLE_KEY = "cartograph";
