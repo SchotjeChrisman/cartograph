@@ -6,7 +6,7 @@ import { hc, theme } from "herdr";
 import { executable } from "./cli.js";
 import { GraphSource } from "./source.js";
 import { askPrompt, folderName } from "./model.js";
-import { button, commandLine, componentDetail, linksSection, notesBanner, staleMark, stateMessage } from "./parts.js";
+import { button, commandLine, refreshButton, componentDetail, linksSection, notesBanner, staleMark, stateMessage } from "./parts.js";
 
 const BOX_WIDTH = 240;
 const BOX_HEIGHT = 112;
@@ -125,7 +125,7 @@ export class FullView {
     return v_flex().id("cartograph-full").size_full().min_h(0).bg(t.background).text_color(t.foreground)
       .child(h_flex().h(42).flex_none().px(14).gap(10).items_center().border_b(1).border_color(t.border)
         .child(this.breadcrumb(t, repo))
-        .child(button(t, "refresh", "Refresh", (_event, cx) => this.refresh(cx))))
+        .child(refreshButton(t, (_event, cx) => this.refresh(cx))))
       .when(Boolean(banner), (el) => el.child(banner))
       .child(h_flex().flex_1().min_h(0)
         .child(v_flex().id("boxes").flex_1().min_w(0).h_full().overflow_y_scrollbar().bg(t.canvas).child(problem ?? this.boxes(t, level)))

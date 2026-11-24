@@ -1,15 +1,22 @@
 // Cartograph's code map in Herdr. Docked, it is the sidebar; opened with props {view: "full"} (the
 // sidebar's "Open full view") it is the full map beside the agent's terminal. A `cartograph`
-// prop points either at another executable than the one on PATH.
+// prop points either at another executable than the one on PATH. With props {toggle: true} it is
+// only the show/hide button for the docked sidebar.
 import { View } from "gpui-kit";
 import { props } from "herdr";
 import { Sidebar } from "./sidebar.js";
 import { FullView } from "./full-view.js";
+import { Toggle } from "./toggle.js";
+
+function chooseFlavour(given) {
+  if (given.toggle) return new Toggle();
+  return given.view === "full" ? new FullView() : new Sidebar();
+}
 
 export default class Cartograph extends View {
   init(_props, _cx) {
     const given = props() ?? {};
-    this.flavour = given.view === "full" ? new FullView() : new Sidebar();
+    this.flavour = chooseFlavour(given);
     this.flavour.init(given);
   }
 

@@ -56,7 +56,7 @@ export class GraphSource {
   async readInfo() {
     try {
       const [location, coverage] = await Promise.all([cli.locateGraph(this.target), cli.coverage(this.target)]);
-      return { status: "ready", repo: location?.repo ?? null, writtenAt: location?.writtenAt ?? null, fileCount: fileCount(coverage) };
+      return { status: "ready", root: location?.root ?? null, repo: location?.repo ?? null, writtenAt: location?.writtenAt ?? null, fileCount: fileCount(coverage) };
     } catch (error) {
       return { status: "failed", detail: String(error instanceof Error ? error.message : error) };
     }

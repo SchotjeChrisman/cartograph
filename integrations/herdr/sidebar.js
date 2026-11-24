@@ -5,11 +5,13 @@ import { v_flex, h_flex } from "gpui-base";
 import { agents, focused, panes, run, spaces, theme } from "herdr";
 import { executable } from "./cli.js";
 import { GraphSource } from "./source.js";
-import { chooseAgent, firstSentence, folderName, footerText } from "./model.js";
-import { button, componentDetail, notesBanner, staleMark, stateMessage } from "./parts.js";
+import { Runs } from "./runs.js";
+import { chooseAgent, firstSentence, folderName, footerText, runFolder } from "./model.js";
+import { button, componentDetail, divider, emptyNote, notesBanner, refreshButton, runStatus, scroller, sectionLabel, staleMark, stateMessage } from "./parts.js";
 
 const MOD_NAME = "cartograph";
 const INDENT = 14;
+const ROW_PADDING = 12;
 const DETAIL_HEIGHT = 300;
 
 // Where the person is working: the focused pane's live folder, else the shown space's.
@@ -29,6 +31,7 @@ export class Sidebar {
     this.executable = executable(props);
     /** @type {Map<string, { source: GraphSource, expanded: Set<number>, selected: any }>} */
     this.places = new Map();
+    this.runs = new Runs(() => this.places.forEach((place) => place.source.clear()));
   }
 
   place(where) {
@@ -67,9 +70,18 @@ export class Sidebar {
     cx.notify();
   }
 
-  select(place, node, cx) {
-    place.selected = node;
+  // Keeps where the node was listed, not the node itself, so a run that rewrites descriptions
+  // shows up in the details once its parent level reloads.
+  select(place, parentId, node, cx) {
+    place.selected = { parentId, node };
     cx.notify();
+  }
+
+  selectedNode(place) {
+    if (!place.selected) return null;
+    const { parentId, node } = place.selected;
+    const level = place.source.level(parentId);
+    return (level?.status === "ready" ? level.children.find((child) => child.id === node.id) : null) ?? node;
   }
 
   openFullView(where, repo) {
@@ -84,27 +96,27 @@ export class Sidebar {
     const level = place.source.level(parentId);
     this.ensureLevel(place.source, parentId, cx);
     if (level?.status !== "ready") {
-      if (depth > 0) rows.push(div().pl(8 + depth * INDENT).py(3).text_size(11).text_color(t.dim).child(level?.status === "loading" || !level ? "Loading…" : level.detail));
+      if (depth > 0) rows.push(div().pl(ROW_PADDING + depth * INDENT).py(3).text_size(12).text_color(t.dim).child(level?.status === "loading" || !level ? "Loading…" : level.detail));
       return rows;
     }
     for (const node of level.children) {
-      rows.push(this.treeRow(t, place, node, depth, cx));
+      rows.push(this.treeRow(t, place, parentId, node, depth, cx));
       if (place.expanded.has(node.id)) this.treeRows(t, place, node.id, depth + 1, rows, cx);
     }
-    if (level.hiddenChildren > 0) rows.push(div().pl(8 + depth * INDENT).py(3).text_size(11).text_color(t.dim).child(`${level.hiddenChildren} more not shown`));
+    if (level.hiddenChildren > 0) rows.push(div().pl(ROW_PADDING + depth * INDENT).py(3).text_size(12).text_color(t.dim).child(`${level.hiddenChildren} more not shown`));
     return rows;
   }
 
-  treeRow(t, place, node, depth, cx) {
+  treeRow(t, place, parentId, node, depth, cx) {
     const below = place.source.level(node.id);
     const isLeaf = below?.status === "ready" && below.children.length === 0;
     const isOpen = place.expanded.has(node.id);
-    const isSelected = place.selected?.id === node.id;
+    const isSelected = place.selected?.node.id === node.id;
     const textColor = node.isStale ? t.dim : t.foreground;
-    return h_flex().id(`node-${node.id}`).flex_none().pl(4 + depth * INDENT).pr(8).py(3).gap(4).items_start().rounded(6).cursor_pointer()
+    return h_flex().id(`node-${node.id}`).flex_none().pl(ROW_PADDING + depth * INDENT).pr(ROW_PADDING).py(4).gap(4).items_start().cursor_pointer()
       .when(isSelected, (el) => el.bg(t.selected)).hover((s) => s.bg(isSelected ? t.selected : t.hover))
-      .on_click((_event, cx) => this.select(place, node, cx))
-      .child(div().id(`toggle-${node.id}`).w(14).flex_none().text_size(10).text_color(t.dim).pt(2)
+      .on_click((_event, cx) => this.select(place, parentId, node, cx))
+      .child(div().id(`toggle-${node.id}`).w(10).flex_none().text_size(10).text_color(t.dim).pt(3)
         // On press, and stopped there, so the row's own click (select) doesn't fire as well.
         .when(!isLeaf, (el) => el.on_mouse_down("left", (_event, cx) => { cx.stop_propagation(); this.toggle(place, node, cx); }))
         .child(isLeaf ? "" : isOpen ? "▾" : "▸"))
@@ -112,16 +124,45 @@ export class Sidebar {
         .child(h_flex().gap(5).min_w(0)
           .child(div().min_w(0).truncate().text_size(13).text_color(textColor).child(node.name))
           .when(node.isStale, (el) => el.child(staleMark(t))))
-        .when(Boolean(node.summary), (el) => el.child(div().truncate().text_size(11).text_color(node.isStale ? t.dim : t.muted).child(firstSentence(node.summary ?? "")))));
+        .when(Boolean(node.summary), (el) => el.child(div().truncate().text_size(12).text_color(t.dim).child(firstSentence(node.summary ?? "")))));
   }
 
-  header(t, place, repo, folder) {
-    const refresh = place ? button(t, "refresh", "Refresh", (_event, cx) => this.refresh(place, cx)) : null;
-    return h_flex().h(42).flex_none().px(12).gap(8).items_center().border_b(1).border_color(t.border)
-      .child(v_flex().flex_1().min_w(0)
-        .child(div().truncate().font_semibold().text_size(13).child(repo || "Cartograph"))
-        .child(div().truncate().text_size(10).text_color(t.dim).child(folder ?? "No folder")))
-      .when(Boolean(refresh), (el) => el.child(refresh));
+  // One run per graph: the key is the folder the run starts in, wherever in it the person is.
+  runTarget(place, where) {
+    const folder = runFolder(place.source.info?.root, where.folder);
+    return { key: JSON.stringify([where.on, folder]), target: { folder, on: where.on, executable: this.executable } };
+  }
+
+  runButton(t, place, where, id, label, commandId, componentId = null) {
+    const { key, target } = this.runTarget(place, where);
+    const isBusy = this.runs.isRunning(key) || place.source.info?.status !== "ready";
+    return button(t, id, label, (_event, cx) => this.runs.start(key, target, commandId, componentId, cx), { isDisabled: isBusy });
+  }
+
+  runControls(t, place, where) {
+    return h_flex().flex_none().flex_wrap().gap(6).px(12).pb(8)
+      .child(this.runButton(t, place, where, "run-update", "Update graph", "update"))
+      .child(this.runButton(t, place, where, "run-describe", "Describe", "describe"))
+      .child(this.runButton(t, place, where, "run-install", "Install for agents", "install"));
+  }
+
+  header(t, place, where, repo) {
+    const status = place ? runStatus(t, this.runs.state(this.runTarget(place, where).key)) : null;
+    return v_flex().flex_none()
+      .child(h_flex().gap(4).items_center().px(12).pt(10).pb(6)
+        .child(div().text_size(11).font_semibold().text_color(t.muted).child("CARTOGRAPH"))
+        .child(div().flex_1())
+        .child(div().min_w(0).truncate().text_size(11).text_color(t.dim).child(repo || "No folder"))
+        .when(Boolean(place), (el) => el.child(refreshButton(t, (_event, cx) => this.refresh(place, cx)))))
+      .when(Boolean(place), (el) => el.child(this.runControls(t, place, where)))
+      .when(Boolean(status), (el) => el.child(status))
+      .child(divider(t));
+  }
+
+  tree(t, place, top, cx) {
+    return v_flex().flex_1().min_h(0)
+      .child(sectionLabel(t, "Components", { count: top.children.length, hint: "click to select" }))
+      .child(scroller("tree", v_flex().pb(12).children(this.treeRows(t, place, null, 0, [], cx))));
   }
 
   footer(t, place, where, repo) {
@@ -136,24 +177,27 @@ export class Sidebar {
   render(cx) {
     const t = theme();
     const where = location();
-    const shell = v_flex().id("cartograph").size_full().min_h(0).bg(t.background).text_color(t.foreground).text_size(13);
-    if (!where.folder) return shell.child(this.header(t, null, "", null)).child(div().p(12).text_color(t.dim).child("Focus a space or an agent to see its map."));
+    const shell = v_flex().id("cartograph").size_full().min_h(0).bg(t.chrome).text_color(t.foreground).text_size(13);
+    if (!where.folder) return shell.child(this.header(t, null, where, "")).child(emptyNote(t, "Focus a space or an agent to see its map."));
     const place = this.place(where);
     this.ensureInfo(place.source, cx);
     const top = place.source.level(null);
     this.ensureLevel(place.source, null, cx);
     const repo = place.source.info?.repo ?? folderName(where.folder);
     const problem = stateMessage(t, top, where.folder);
-    const selected = place.selected;
+    const selected = this.selectedNode(place);
     return shell
-      .child(this.header(t, place, repo, where.folder))
+      .child(this.header(t, place, where, repo))
       .when(Boolean(notesBanner(t, top)), (el) => el.child(notesBanner(t, top)))
-      .child(problem ?? v_flex().id("tree").flex_1().min_h(0).overflow_y_scrollbar().p(6).children(this.treeRows(t, place, null, 0, [], cx)))
+      .child(problem ?? this.tree(t, place, top, cx))
       .when(Boolean(problem), (el) => el.child(div().flex_1()))
       .when(Boolean(selected) && !problem, (el) => {
+        this.ensureLevel(place.source, place.selected.parentId, cx);
         this.ensureLevel(place.source, selected.id, cx);
-        return el.child(v_flex().id("detail").flex_none().h(DETAIL_HEIGHT).overflow_y_scrollbar().p(12).border_t(1).border_color(t.border)
-          .child(componentDetail(t, selected, place.source.level(selected.id))));
+        return el.child(v_flex().flex_none().h(DETAIL_HEIGHT).border_t(1).border_color(t.border)
+          .child(scroller("detail", v_flex().p(12).gap(10)
+            .child(componentDetail(t, selected, place.source.level(selected.id)))
+            .child(h_flex().child(this.runButton(t, place, where, "run-describe-this", "Describe this", "describeComponent", selected.id))))));
       })
       .child(this.footer(t, place, where, repo));
   }

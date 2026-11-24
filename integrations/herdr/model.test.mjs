@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   age, askPrompt, chooseAgent, componentNode, fileCount, firstSentence, footerText, overviewArgs,
-  overviewCommand, overviewLevel, parseLocation, runResult, startFailure, strongestLinks,
+  overviewCommand, overviewLevel, parseLocation, runFolder, runRefreshesTree, runResult, runSteps, startFailure, stepOutcome, strongestLinks,
 } from "./model.js";
 
 const componentView = ({ id, stale = false, description = null, descriptionStale = false }) => ({
@@ -27,6 +27,8 @@ test("runs are classified: JSON, no graph, other failures, and a missing executa
   assert.equal(runResult({ code: 1, stdout: "", stderr: "error: no graph at /x/.cartograph/graph.db; run `cartograph index` first" }).status, "no-graph");
   assert.deepEqual(runResult({ code: 1, stdout: "", stderr: "error: boom\n" }), { status: "failed", detail: "error: boom" });
   assert.match(runResult({ code: 0, stdout: "not json", stderr: "" }).detail, /not JSON/);
+  assert.deepEqual(runResult({ code: 127, stdout: "", stderr: "sh: cartograph: not found\n" }, "cartograph"),
+    { status: "not-installed", executable: "cartograph", detail: "sh: cartograph: not found" });
   assert.equal(startFailure("cartograph", new Error("cannot start cartograph: program not found")).status, "not-installed");
   assert.equal(startFailure("cartograph", new Error("timed out")).status, "failed");
 });
@@ -84,4 +86,25 @@ test("the prompt names the component and the command, on one line", () => {
   assert.match(prompt, /"Query" component \(#4\)/);
   assert.match(prompt, /cartograph overview --component 4/);
   assert.equal(prompt.includes("\n"), false);
+});
+
+test("update graph indexes then clusters; describe uses the CLI defaults unless one component is named", () => {
+  assert.deepEqual(runSteps("update").map((step) => [step.label, step.args]), [["Indexing…", ["index"]], ["Clustering…", ["cluster"]]]);
+  assert.deepEqual(runSteps("describe").map((step) => step.args), [["describe"]]);
+  assert.deepEqual(runSteps("describeComponent", 7).map((step) => step.args), [["describe", "--component", "7"]]);
+  assert.deepEqual(runSteps("install").map((step) => step.args), [["install"]]);
+  assert.equal(runSteps("describe")[0].timeoutMs, 600000);
+  assert.deepEqual([runRefreshesTree("update"), runRefreshesTree("describeComponent"), runRefreshesTree("install")], [true, true, false]);
+});
+
+test("a run starts in the graph root, else the focused folder", () => {
+  assert.equal(runFolder("/a", "/a/src"), "/a");
+  assert.equal(runFolder(null, "/b"), "/b");
+});
+
+test("a step shows its last output line, or all of stderr when it fails", () => {
+  assert.deepEqual(stepOutcome({ code: 0, stdout: "scanning\nindexed 12 files\n", stderr: "" }), { isFailure: false, text: "indexed 12 files" });
+  assert.deepEqual(stepOutcome({ code: 0, stdout: "", stderr: "" }), { isFailure: false, text: "Done." });
+  assert.deepEqual(stepOutcome({ code: 1, stdout: "partial", stderr: "error: a\nerror: b\n" }), { isFailure: true, text: "error: a\nerror: b" });
+  assert.equal(stepOutcome({ code: 2, stdout: "", stderr: "" }).text, "cartograph exited with code 2");
 });

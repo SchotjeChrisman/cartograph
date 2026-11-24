@@ -15,6 +15,8 @@ const EMPTY_GRAPH_NOTE = "the graph is empty";
 const INDEXING_NOTE = "indexing in progress";
 const NO_GRAPH_ERROR = /no graph at (.+?); run `cartograph index`/;
 const NOT_INSTALLED_ERROR = /program not found|No such file or directory|ENOENT/i;
+// The exit code sh uses when the program it was told to exec does not exist.
+const SHELL_COMMAND_NOT_FOUND = 127;
 const MINUTE = 60;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
@@ -44,7 +46,10 @@ export function startFailure(executable, error) {
 }
 
 /** One finished `cartograph --json ...` run: its parsed query::Output, or why there is none. */
-export function runResult(execResult) {
+export function runResult(execResult, executable) {
+  if (execResult.code === SHELL_COMMAND_NOT_FOUND) {
+    return { status: "not-installed", executable, detail: execResult.stderr.trim() };
+  }
   if (execResult.code !== 0) {
     const stderr = execResult.stderr.trim() || `cartograph exited with code ${execResult.code}`;
     const noGraph = stderr.match(NO_GRAPH_ERROR);
@@ -115,6 +120,40 @@ export function overviewLevel(result) {
 export function fileCount(result) {
   if (result.status !== "ready" || result.output.report.tool !== "coverage") return null;
   return result.output.report.inputs.files.reduce((sum, entry) => sum + entry.count, 0);
+}
+
+const FIVE_MINUTES_MS = 5 * MINUTE * 1000;
+// The longest a single exec may run (Herdr's cap); describe calls a model per component.
+const EXEC_MAX_MS = 10 * MINUTE * 1000;
+
+/** The buttons that run cartograph, by id: their steps and whether the tree must be reloaded after. */
+const RUN_COMMANDS = {
+  update: { refreshesTree: true, steps: () => [
+    { label: "Indexing…", args: ["index"], timeoutMs: FIVE_MINUTES_MS },
+    { label: "Clustering…", args: ["cluster"], timeoutMs: FIVE_MINUTES_MS },
+  ] },
+  describe: { refreshesTree: true, steps: () => [{ label: "Describing…", args: ["describe"], timeoutMs: EXEC_MAX_MS }] },
+  describeComponent: { refreshesTree: true, steps: (componentId) => [{ label: "Describing…", args: ["describe", "--component", String(componentId)], timeoutMs: EXEC_MAX_MS }] },
+  install: { refreshesTree: false, steps: () => [{ label: "Installing…", args: ["install"], timeoutMs: FIVE_MINUTES_MS }] },
+};
+
+/** The ordered steps of a run command; `componentId` only matters to describeComponent. */
+export const runSteps = (commandId, componentId = null) => RUN_COMMANDS[commandId].steps(componentId);
+
+export const runRefreshesTree = (commandId) => RUN_COMMANDS[commandId].refreshesTree;
+
+/** Where a run starts: the graph root when there is one, else the focused folder (a new graph). */
+export const runFolder = (graphRoot, focusedFolder) => graphRoot ?? focusedFolder;
+
+const lastLine = (text) => text.trim().split("\n").pop();
+
+/** One finished step: the last meaningful output line, or on failure everything it said on stderr. */
+export function stepOutcome(execResult) {
+  if (execResult.code === 0) {
+    return { isFailure: false, text: lastLine(execResult.stdout) || lastLine(execResult.stderr) || "Done." };
+  }
+  const detail = execResult.stderr.trim() || execResult.stdout.trim();
+  return { isFailure: true, text: detail || `cartograph exited with code ${execResult.code}` };
 }
 
 export const folderName = (folder) => folder?.split("/").filter(Boolean).pop() ?? "";
