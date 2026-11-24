@@ -7,22 +7,17 @@ import { COVERAGE_ARGS, exploreArgs, overviewArgs, parseLocation, runResult, sta
 const QUERY_TIMEOUT_MS = 120 * 1000;
 const LOCATE_TIMEOUT_MS = 10 * 1000;
 
-// Walks up like the CLI's workspace::graph_root does, then falls back to the one linked worktree
-// directly inside the folder that holds a graph (a bare-clone project's top); several such
-// worktrees count as none, as the CLI refuses to guess. `date -r <file>` prints a file's
-// modification time on both BSD and GNU date; the WAL file is newer while writes wait for a
-// checkpoint.
+// Same order as the CLI's workspace::graph_root: the folder's own graph, then the one linked
+// worktree directly inside it that holds a graph (a bare-clone project's top; several count as
+// none, as the CLI refuses to guess), then the nearest ancestor with a graph. `date -r <file>`
+// prints a file's modification time on both BSD and GNU date; the WAL file is newer while writes
+// wait for a checkpoint.
 const LOCATE_SCRIPT = `found() {
   printf '%s\\n' "$1"
   for f in "$1/.cartograph/graph.db" "$1/.cartograph/graph.db-wal"; do [ -f "$f" ] && date -r "$f" +%s; done
   exit 0
 }
-d=$1
-while :; do
-  [ -f "$d/.cartograph/graph.db" ] && found "$d"
-  [ "$d" = / ] && break
-  d=$(dirname "$d")
-done
+[ -f "$1/.cartograph/graph.db" ] && found "$1"
 only= count=0
 for w in "$1"/*/ "$1"/.[!.]*/; do
   w=\${w%/}
@@ -30,6 +25,12 @@ for w in "$1"/*/ "$1"/.[!.]*/; do
   only=$w count=$((count + 1))
 done
 [ "$count" = 1 ] && found "$only"
+d=$1
+while :; do
+  [ -f "$d/.cartograph/graph.db" ] && found "$d"
+  [ "$d" = / ] && break
+  d=$(dirname "$d")
+done
 exit 1`;
 
 const DEFAULT_EXECUTABLE = "cartograph";
