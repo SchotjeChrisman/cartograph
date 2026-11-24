@@ -7,3 +7,4 @@ mod mcp;
 mod parallel;
 mod queries;
 mod stale;
+mod worktrees;

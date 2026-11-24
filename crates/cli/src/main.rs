@@ -42,7 +42,7 @@ fn run(cli: Cli) -> Result<()> {
             print(&ask::render(&output, cli.json)?)
         }
         Command::Index => print(&commands::index::run(
-            &workspace::index_root(explicit)?,
+            &workspace::index_target(explicit)?,
             cli.json,
         )?),
         Command::Describe(args) => print(&commands::describe::run(
