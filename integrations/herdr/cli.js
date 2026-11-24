@@ -8,8 +8,8 @@ const QUERY_TIMEOUT_MS = 120 * 1000;
 const LOCATE_TIMEOUT_MS = 10 * 1000;
 
 // Same order as the CLI's workspace::graph_root: the folder's own graph, then the one linked
-// worktree directly inside it that holds a graph (a bare-clone project's top; several count as
-// none, as the CLI refuses to guess), then the nearest ancestor with a graph. `date -r <file>`
+// worktree directly inside it that holds a graph (a bare-clone project's top; with several it
+// finds nothing, as the CLI refuses to guess), then the nearest ancestor with a graph. `date -r <file>`
 // prints a file's modification time on both BSD and GNU date; the WAL file is newer while writes
 // wait for a checkpoint.
 const LOCATE_SCRIPT = `found() {
@@ -25,6 +25,7 @@ for w in "$1"/*/ "$1"/.[!.]*/; do
   only=$w count=$((count + 1))
 done
 [ "$count" = 1 ] && found "$only"
+[ "$count" -gt 1 ] && exit 1
 d=$1
 while :; do
   [ -f "$d/.cartograph/graph.db" ] && found "$d"
