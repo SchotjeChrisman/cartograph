@@ -52,3 +52,16 @@ fn many_changed_files_only_warn() {
     ok(dir, &["index"]);
     assert!(ok(dir, &["find", "bulk_7"]).contains("bulk/file_7.rs"));
 }
+
+#[test]
+fn edits_in_a_linked_worktree_do_not_make_the_graph_stale() {
+    let project = indexed_project("stale-worktree");
+    let dir = project.path();
+    std::fs::create_dir_all(dir.join("wt/src")).unwrap();
+    std::fs::write(dir.join("wt/.git"), "gitdir: /p/.bare/worktrees/wt\n").unwrap();
+    std::fs::write(dir.join("wt/src/other.rs"), "pub fn elsewhere() {}\n").unwrap();
+
+    let answer = ok(dir, &["find", "leaf"]);
+
+    assert!(!answer.contains(REINDEX_NOTE), "{answer}");
+}

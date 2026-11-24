@@ -17,7 +17,7 @@ use std::time::{Duration, UNIX_EPOCH};
 
 use graph::{Claim, ContentHash, GraphDir, JobOutcome, Query, Reader, UnixSeconds, Writer};
 use ignore::WalkBuilder;
-use index::{IndexOptions, index_directory};
+use index::{IndexOptions, index_directory, is_linked_worktree};
 use query::Staleness;
 
 /// More changed files than this are not re-indexed inline.
@@ -206,7 +206,9 @@ fn scan_tracked_files(root: &Path, graph_paths: &HashSet<String>) -> Result<Vec<
         .follow_links(false)
         .filter_entry(|entry| {
             let name = entry.file_name();
-            name != GIT_ENTRY && name != GRAPH_DIR_NAME
+            name != GIT_ENTRY
+                && name != GRAPH_DIR_NAME
+                && !(entry.depth() > 0 && is_linked_worktree(entry.path()))
         });
     let mut files = Vec::new();
     for entry in walk.build() {

@@ -20,7 +20,7 @@ use rayon::prelude::*;
 
 use crate::cache::{CacheReader, CachedHashes};
 use crate::config::Config;
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::facts::{facts_with_declared_edges, facts_with_extraction, facts_without_extraction};
 use crate::links;
 use crate::plan::{Change, changed_keys, follow_includes, mentions_any};
@@ -71,6 +71,13 @@ pub struct IndexReport {
 pub fn index_directory(root: &Path, options: &IndexOptions) -> Result<IndexReport> {
     let dir = GraphDir::of_root(root);
     let config = Config::load(&dir)?;
+    let mut scan = scan(root, &config)?;
+    if scan.files.is_empty() && !scan.skipped_worktrees.is_empty() {
+        return Err(Error::OnlyWorktrees {
+            root: root.to_path_buf(),
+            worktrees: scan.skipped_worktrees,
+        });
+    }
     let lock = IndexerLock::acquire(&dir)?;
     let mut writer = Writer::open(&dir)?;
     let previous: HashMap<String, FileRow> = Reader::open(&dir)?
@@ -79,7 +86,6 @@ pub fn index_directory(root: &Path, options: &IndexOptions) -> Result<IndexRepor
         .map(|row| (row.path.clone(), row))
         .collect();
 
-    let mut scan = scan(root, &config)?;
     let (context, context_warnings) = crate::context::read_context(root, &scan);
     let mut cache = ExtractionCache::open(&dir, &fingerprint(&context, &config))?;
     let cached = cache.hashes()?;

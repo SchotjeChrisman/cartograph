@@ -66,7 +66,7 @@ Crates: graph (types + SQLite store), index (walker + parsing), languages (one m
 - Optional opt-in strict hook (PreToolUse, like Graphify's `--strict`) denies Read and Grep until a graph query has oriented the agent in the session. Off by default; it must allow Read and Grep when `coverage` says the relevant files are unparsed.
 
 ## Skip rules and privacy
-- The walk respects .gitignore and `.cartographignore` (same syntax, read only by cartograph; the generic `.ignore` is not read, so ripgrep and cartograph exclusions stay separate). Vendored (third_party/, vendor/, node_modules/, *.min.js) and generated (generated-file headers) paths are indexed but tagged, de-ranked in queries and excluded from components by default (`--include-vendored`). Patterns are overridable in `.cartograph/config.toml`.
+- The walk respects .gitignore and `.cartographignore` (same syntax, read only by cartograph; the generic `.ignore` is not read, so ripgrep and cartograph exclusions stay separate). Vendored (third_party/, vendor/, node_modules/, *.min.js) and generated (generated-file headers) paths are indexed but tagged, de-ranked in queries and excluded from components by default (`--include-vendored`). Patterns are overridable in `.cartograph/config.toml`. Linked git worktrees below the root (a `.git` file pointing into a `worktrees/` folder) are skipped, since they hold the same code on another branch; a root holding only worktrees refuses to index and lists them. Submodules are still indexed.
 - Secret files (.env, *.pem, key files, credential patterns) are never parsed or stored; `coverage` lists what was skipped and why.
 - No telemetry, no network except the chosen describer backend. Query logs stay local.
 

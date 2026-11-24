@@ -21,6 +21,11 @@ pub enum Error {
         path: String,
         source: serde_json::Error,
     },
+    /// The root holds only git worktrees; each is its own project.
+    OnlyWorktrees {
+        root: PathBuf,
+        worktrees: Vec<String>,
+    },
     /// The cache lost an extraction this run had just stored or relied on.
     CacheEntryMissing(String),
 }
@@ -35,6 +40,12 @@ impl fmt::Display for Error {
             Error::CacheEntry { path, source } => write!(
                 formatter,
                 "cached extraction of {path} is unreadable: {source}; delete the extraction cache to force a full re-index"
+            ),
+            Error::OnlyWorktrees { root, worktrees } => write!(
+                formatter,
+                "{} holds git worktrees and no source of its own; run cartograph inside one of: {}",
+                root.display(),
+                worktrees.join(", ")
             ),
             Error::CacheEntryMissing(path) => write!(
                 formatter,

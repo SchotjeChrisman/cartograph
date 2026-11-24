@@ -4,6 +4,7 @@
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex};
 
 use ignore::WalkBuilder;
 
@@ -16,8 +17,26 @@ const GIT_ENTRY: &str = ".git";
 /// Gitignore syntax, read only by cartograph: the generic `.ignore` is shared with ripgrep and
 /// other tools, so excluding something there would hide it from them too.
 const IGNORE_FILE_NAME: &str = ".cartographignore";
+const GITDIR_PREFIX: &str = "gitdir:";
+const WORKTREES_DIR_NAME: &str = "worktrees";
 /// The repo tag for files whose nearest `.git` is the root itself.
 const ROOT_REPO: &str = ".";
+
+/// Whether `directory` is a checkout made by `git worktree add`: its `.git` is a file that points
+/// into a repository's `worktrees/` folder. Submodules point into `modules/` and stay indexed,
+/// and so do nested clones, whose `.git` is a directory.
+pub fn is_linked_worktree(directory: &Path) -> bool {
+    let Ok(pointer) = std::fs::read_to_string(directory.join(GIT_ENTRY)) else {
+        return false;
+    };
+    pointer
+        .strip_prefix(GITDIR_PREFIX)
+        .is_some_and(|target| {
+            Path::new(target.trim())
+                .components()
+                .any(|part| part.as_os_str() == WORKTREES_DIR_NAME)
+        })
+}
 
 pub struct ScannedFile {
     /// Root-relative, `/`-separated.
@@ -33,6 +52,9 @@ pub struct Scan {
     pub files: Vec<ScannedFile>,
     /// `.cartograph` directories below the root; each was skipped.
     pub nested_graphs: Vec<ScannedFile>,
+    /// Root-relative directories of linked git worktrees; each was skipped, because the same
+    /// code checked out on another branch would be indexed a second time.
+    pub skipped_worktrees: Vec<String>,
     /// Root-relative paths of every `Cargo.toml`.
     pub cargo_manifests: Vec<String>,
     /// Root-relative paths of every `composer.json`.
@@ -42,6 +64,7 @@ pub struct Scan {
 }
 
 pub fn scan(root: &Path, config: &Config) -> Result<Scan> {
+    let skipped_worktrees = Arc::new(Mutex::new(Vec::new()));
     let mut builder = WalkBuilder::new(root);
     builder
         .hidden(false)
@@ -51,13 +74,29 @@ pub fn scan(root: &Path, config: &Config) -> Result<Scan> {
         .git_global(false)
         .parents(false)
         .follow_links(false)
-        .filter_entry(|entry| {
-            let name = entry.file_name();
-            name != GIT_ENTRY && name != GRAPH_DIR_NAME
+        .filter_entry({
+            let skipped = Arc::clone(&skipped_worktrees);
+            move |entry| {
+                let name = entry.file_name();
+                if name == GIT_ENTRY || name == GRAPH_DIR_NAME {
+                    return false;
+                }
+                let is_worktree = entry.depth() > 0
+                    && entry.file_type().is_some_and(|kind| kind.is_dir())
+                    && is_linked_worktree(entry.path());
+                if is_worktree {
+                    skipped
+                        .lock()
+                        .expect("no walk callback panics while holding the lock")
+                        .push(entry.path().to_path_buf());
+                }
+                !is_worktree
+            }
         });
     let mut scan = Scan {
         files: Vec::new(),
         nested_graphs: Vec::new(),
+        skipped_worktrees: Vec::new(),
         cargo_manifests: Vec::new(),
         composer_manifests: Vec::new(),
         warnings: Vec::new(),
@@ -127,6 +166,13 @@ pub fn scan(root: &Path, config: &Config) -> Result<Scan> {
             classification,
         });
     }
+    scan.skipped_worktrees = skipped_worktrees
+        .lock()
+        .expect("the walk has finished, so no callback holds the lock")
+        .iter()
+        .filter_map(|path| relative_path(root, path))
+        .collect();
+    scan.skipped_worktrees.sort();
     scan.files.sort_by(|left, right| left.path.cmp(&right.path));
     scan.nested_graphs
         .sort_by(|left, right| left.path.cmp(&right.path));
