@@ -21,4 +21,4 @@ mod walk;
 pub use config::Config;
 pub use error::{Error, Result};
 pub use run::{IndexOptions, IndexReport, index_directory};
-pub use walk::is_linked_worktree;
+pub use walk::{is_bare_clone_root, is_linked_worktree, worktrees_with_graph};

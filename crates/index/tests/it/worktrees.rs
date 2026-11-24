@@ -45,3 +45,52 @@ fn a_root_holding_only_worktrees_is_not_indexed() {
     assert!(error.contains("feature, main"), "{error}");
     assert!(!tree.path().join(".cartograph").exists());
 }
+
+/// `<project>/.bare` holds the repository, `<project>/.git` points at it, and every checkout is
+/// a linked worktree beside them; `.shared` stands for files that belong to no checkout.
+fn bare_clone(name: &str, worktrees: &[&str]) -> TestDir {
+    let tree = TestDir::new(name);
+    tree.write(".git", "gitdir: ./.bare\n");
+    tree.write(".bare/config", "[core]\n\tbare = true\n");
+    tree.write(".shared/notes.rs", SOURCE);
+    for worktree in worktrees {
+        tree.write(&format!("{worktree}/src/lib.rs"), SOURCE);
+        tree.write(
+            &format!("{worktree}/.git"),
+            &format!("gitdir: ../.bare/worktrees/{worktree}\n"),
+        );
+    }
+    tree
+}
+
+#[test]
+fn a_bare_clone_root_is_not_indexed_despite_stray_files() {
+    let tree = bare_clone("bare-root", &["main", "develop"]);
+
+    let error = index::index_directory(tree.path(), &index::IndexOptions::default())
+        .unwrap_err()
+        .to_string();
+
+    assert!(error.contains("develop, main"), "{error}");
+    assert!(!tree.path().join(".cartograph").exists());
+    assert!(index::is_bare_clone_root(tree.path()));
+    assert!(!index::is_bare_clone_root(&tree.path().join("main")));
+}
+
+#[test]
+fn worktrees_with_graph_lists_only_indexed_worktrees() {
+    let tree = bare_clone("bare-graphs", &["main", "develop", "feature"]);
+    assert!(index::worktrees_with_graph(tree.path()).is_empty());
+
+    index(&tree.path().join("develop"));
+    assert_eq!(
+        index::worktrees_with_graph(tree.path()),
+        [tree.path().join("develop")]
+    );
+
+    index(&tree.path().join("main"));
+    assert_eq!(
+        index::worktrees_with_graph(tree.path()),
+        [tree.path().join("develop"), tree.path().join("main")]
+    );
+}

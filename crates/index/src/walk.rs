@@ -6,6 +6,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 
+use graph::GraphDir;
 use ignore::WalkBuilder;
 
 use crate::classify::{Classification, classify};
@@ -19,6 +20,9 @@ const GIT_ENTRY: &str = ".git";
 const IGNORE_FILE_NAME: &str = ".cartographignore";
 const GITDIR_PREFIX: &str = "gitdir:";
 const WORKTREES_DIR_NAME: &str = "worktrees";
+const GIT_CONFIG_FILE: &str = "config";
+/// A git config line, with its whitespace removed.
+const BARE_SETTING: &str = "bare=true";
 /// The repo tag for files whose nearest `.git` is the root itself.
 const ROOT_REPO: &str = ".";
 
@@ -26,16 +30,45 @@ const ROOT_REPO: &str = ".";
 /// into a repository's `worktrees/` folder. Submodules point into `modules/` and stay indexed,
 /// and so do nested clones, whose `.git` is a directory.
 pub fn is_linked_worktree(directory: &Path) -> bool {
-    let Ok(pointer) = std::fs::read_to_string(directory.join(GIT_ENTRY)) else {
+    git_file_target(directory).is_some_and(|target| {
+        target
+            .components()
+            .any(|part| part.as_os_str() == WORKTREES_DIR_NAME)
+    })
+}
+
+/// Whether `directory` is the top of a bare-clone layout: its `.git` file points at a bare
+/// repository, so the code lives only in the linked worktrees beside it.
+pub fn is_bare_clone_root(directory: &Path) -> bool {
+    let Some(target) = git_file_target(directory) else {
         return false;
     };
-    pointer
-        .strip_prefix(GITDIR_PREFIX)
-        .is_some_and(|target| {
-            Path::new(target.trim())
-                .components()
-                .any(|part| part.as_os_str() == WORKTREES_DIR_NAME)
+    std::fs::read_to_string(directory.join(target).join(GIT_CONFIG_FILE)).is_ok_and(|config| {
+        config
+            .lines()
+            .any(|line| line.split_whitespace().collect::<String>() == BARE_SETTING)
+    })
+}
+
+/// The linked worktrees directly inside `directory` that hold a graph, sorted.
+pub fn worktrees_with_graph(directory: &Path) -> Vec<PathBuf> {
+    let Ok(entries) = std::fs::read_dir(directory) else {
+        return Vec::new();
+    };
+    let mut found: Vec<PathBuf> = entries
+        .filter_map(|entry| Some(entry.ok()?.path()))
+        .filter(|child| {
+            is_linked_worktree(child) && GraphDir::of_root(child).database_path().exists()
         })
+        .collect();
+    found.sort();
+    found
+}
+
+/// Where a `.git` file points; `None` when `.git` is missing or a directory.
+fn git_file_target(directory: &Path) -> Option<PathBuf> {
+    let pointer = std::fs::read_to_string(directory.join(GIT_ENTRY)).ok()?;
+    Some(PathBuf::from(pointer.strip_prefix(GITDIR_PREFIX)?.trim()))
 }
 
 pub struct ScannedFile {

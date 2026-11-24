@@ -72,7 +72,8 @@ pub fn index_directory(root: &Path, options: &IndexOptions) -> Result<IndexRepor
     let dir = GraphDir::of_root(root);
     let config = Config::load(&dir)?;
     let mut scan = scan(root, &config)?;
-    if scan.files.is_empty() && !scan.skipped_worktrees.is_empty() {
+    let holds_only_worktrees = scan.files.is_empty() || crate::walk::is_bare_clone_root(root);
+    if holds_only_worktrees && !scan.skipped_worktrees.is_empty() {
         return Err(Error::OnlyWorktrees {
             root: root.to_path_buf(),
             worktrees: scan.skipped_worktrees,
